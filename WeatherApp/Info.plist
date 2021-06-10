@@ -62,5 +62,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Allow Weather app to access this device&apos;s location all-the-time?</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>The app will only have access to the location while you&apos;re using the app.</string>
 </dict>
 </plist>
