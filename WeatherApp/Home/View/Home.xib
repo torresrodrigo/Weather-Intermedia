@@ -3,13 +3,14 @@
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="HomeViewController">
             <connections>
-                <outlet property="alertLabel" destination="5eS-e9-5dd" id="K5q-vK-6by"/>
+                <outlet property="pageControl" destination="LKU-Zl-PPZ" id="qY2-nG-j7T"/>
                 <outlet property="view" destination="iN0-l3-epB" id="HmK-ik-gfK"/>
             </connections>
         </placeholder>
@@ -18,20 +19,73 @@
             <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Welcome Weather App" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5eS-e9-5dd">
-                    <rect key="frame" x="119.5" y="437.5" width="175" height="21"/>
-                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <nil key="textColor"/>
-                    <nil key="highlightedColor"/>
-                </label>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="U8h-3w-Upk" userLabel="BottomBar">
+                    <rect key="frame" x="0.0" y="788" width="414" height="108"/>
+                    <subviews>
+                        <pageControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="LKU-Zl-PPZ">
+                            <rect key="frame" x="146.5" y="14" width="121.5" height="27.5"/>
+                            <color key="currentPageIndicatorTintColor" name="SelectedPage+Grafics"/>
+                        </pageControl>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Hwu-GM-ZGe">
+                            <rect key="frame" x="27" y="7" width="23" height="23"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="23" id="D6D-o3-n27"/>
+                                <constraint firstAttribute="height" constant="23" id="u6Z-SF-a1I"/>
+                            </constraints>
+                            <state key="normal" image="search-solid"/>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6yP-Wm-cYi">
+                            <rect key="frame" x="367" y="7" width="20" height="23"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="20" id="Z7l-H2-iwe"/>
+                                <constraint firstAttribute="height" constant="23" id="ZNG-do-kPD"/>
+                            </constraints>
+                            <state key="normal" image="bell-solid"/>
+                        </button>
+                    </subviews>
+                    <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstItem="Hwu-GM-ZGe" firstAttribute="top" secondItem="U8h-3w-Upk" secondAttribute="top" constant="7" id="9o1-42-RJ2"/>
+                        <constraint firstItem="LKU-Zl-PPZ" firstAttribute="top" secondItem="U8h-3w-Upk" secondAttribute="top" constant="14" id="JAt-ps-xTv"/>
+                        <constraint firstAttribute="trailing" secondItem="6yP-Wm-cYi" secondAttribute="trailing" constant="27" id="Vvj-Nn-6Ew"/>
+                        <constraint firstItem="6yP-Wm-cYi" firstAttribute="top" secondItem="U8h-3w-Upk" secondAttribute="top" constant="7" id="ax6-Hz-cyc"/>
+                        <constraint firstAttribute="height" constant="108" id="bl1-b7-KME"/>
+                        <constraint firstItem="Hwu-GM-ZGe" firstAttribute="leading" secondItem="U8h-3w-Upk" secondAttribute="leading" constant="27" id="eIc-kN-GGa"/>
+                        <constraint firstItem="LKU-Zl-PPZ" firstAttribute="centerX" secondItem="U8h-3w-Upk" secondAttribute="centerX" id="iwP-ES-vFN"/>
+                    </constraints>
+                </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fow-I5-Xzr" userLabel="Separator">
+                    <rect key="frame" x="0.0" y="787" width="414" height="1"/>
+                    <color key="backgroundColor" name="Separator"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="1" id="bUG-Kg-6Pl"/>
+                    </constraints>
+                </view>
             </subviews>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
-            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color key="backgroundColor" name="Primary"/>
             <constraints>
-                <constraint firstItem="5eS-e9-5dd" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="KKd-ms-Ej3"/>
-                <constraint firstItem="5eS-e9-5dd" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="KO7-EP-nrM"/>
+                <constraint firstItem="U8h-3w-Upk" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="9co-Mb-Ogi"/>
+                <constraint firstItem="U8h-3w-Upk" firstAttribute="top" secondItem="fow-I5-Xzr" secondAttribute="bottom" id="Ort-hf-Auc"/>
+                <constraint firstAttribute="bottom" secondItem="U8h-3w-Upk" secondAttribute="bottom" id="VHC-yR-IcW"/>
+                <constraint firstAttribute="trailing" secondItem="U8h-3w-Upk" secondAttribute="trailing" id="gHr-78-MLG"/>
+                <constraint firstAttribute="trailing" secondItem="fow-I5-Xzr" secondAttribute="trailing" id="mWM-qK-XJf"/>
+                <constraint firstItem="fow-I5-Xzr" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="nWf-O0-nns"/>
             </constraints>
-            <point key="canvasLocation" x="139" y="127"/>
+            <point key="canvasLocation" x="135.19999999999999" y="125.4872563718141"/>
         </view>
     </objects>
+    <resources>
+        <image name="bell-solid" width="19.5" height="22.5"/>
+        <image name="search-solid" width="22.5" height="22.5"/>
+        <namedColor name="Primary">
+            <color red="0.0" green="0.56499999761581421" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="SelectedPage+Grafics">
+            <color red="0.97647058823529409" green="0.8666666666666667" blue="0.5607843137254902" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="Separator">
+            <color red="0.83137254901960789" green="0.83137254901960789" blue="0.83137254901960789" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+    </resources>
 </document>
