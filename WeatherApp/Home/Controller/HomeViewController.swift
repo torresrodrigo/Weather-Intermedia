@@ -11,17 +11,31 @@ class HomeViewController: UIViewController {
     
     let locationService = LocationService()
     
-    @IBOutlet weak var alertLabel: UILabel!
+    @IBOutlet weak var pageControl: UIPageControl!
     override func viewDidLoad() {
         super.viewDidLoad()
         initializeLocationServices()
+        setupUI()
     }
     
     private func initializeLocationServices() {
         locationService.delegate = self
-        
     }
     
+    private func setupUI() {
+        setupPageControl()
+    }
+    
+}
+
+
+extension HomeViewController {
+    
+    func setupPageControl() {
+        self.pageControl.backgroundStyle = .minimal
+        self.pageControl.setIndicatorImage(UIImage(named: "location-arrow-solid"), forPage: 0)
+        self.pageControl.preferredIndicatorImage = UIImage(named: "step")
+    }
 }
 
 extension HomeViewController: LocationServicesDelegate {
@@ -33,9 +47,7 @@ extension HomeViewController: LocationServicesDelegate {
     func didAuthorize() {
         locationService.start()
     }
-}
-
-extension HomeViewController {
+    
     func prompAuthorization() {
         let alert = UIAlertController(title: "Location access is needed to get your current location", message: "Please allow location access", preferredStyle: .alert)
         let settingsAction = UIAlertAction(title: "Settings", style: .default) { _ in
@@ -52,3 +64,4 @@ extension HomeViewController {
         
     }
 }
+
