@@ -11,6 +11,7 @@ class HomeViewController: UIViewController {
     
     // MARK: - IBOutlets
     
+    //HeaderView
     @IBOutlet weak var currentLocation: UILabel!
     @IBOutlet weak var provinceLocation: UILabel!
     @IBOutlet weak var countryLocation: UILabel!
@@ -18,18 +19,26 @@ class HomeViewController: UIViewController {
     @IBOutlet weak var temperatureLocation: UILabel!
     @IBOutlet weak var rainProbability: UILabel!
     @IBOutlet weak var windStatus: UILabel!
+    
+    //StackView
+    @IBOutlet weak var dailyForecastTableView : UITableView!
+    @IBOutlet weak var homeScrollView: UIScrollView!
+    
+    //BotomBar
     @IBOutlet weak var detailButton: UIButton!
-    @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var pageControl: UIPageControl!
     
     //MARK: - Services
     
     let locationService = LocationService()
+    //Test other values from TableView
+    var TestService = [TestDailyForecast]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         initializeLocationServices()
         setupUI()
+        self.TestService = createArrayTest()
     }
     
     //MARK: - HomeViewController Events
@@ -41,6 +50,7 @@ class HomeViewController: UIViewController {
     private func setupUI() {
         setupPageControl()
         setupScrollView()
+        setupTableView()
     }
     
 }
@@ -61,17 +71,44 @@ extension HomeViewController {
 extension HomeViewController: UIScrollViewDelegate {
     
     func setupScrollView() {
-        scrollView.delegate = self
+        homeScrollView.delegate = self
     }
         
-    //Top no bouncing
+    //Method for change background color in ScrollView
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if scrollView.contentOffset.y < 0 {
-            scrollView.contentOffset.y = 0
+        let topInsetForBouncing = scrollView.safeAreaInsets.top != 0.0 ? -scrollView.safeAreaInsets.top : 0.0
+        let isBouncingTop: Bool = scrollView.contentOffset.y < topInsetForBouncing - scrollView.contentInset.top
+        
+        if isBouncingTop {
+            scrollView.backgroundColor = UIColor(named: "Secondary")
+        } else {
+            scrollView.backgroundColor = UIColor(named: "Primary")
         }
     }
-    
 }
+
+    //MARK: - TableView Extension
+
+extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
+    
+    func setupTableView() {
+        dailyForecastTableView.register(DailyForecastTableViewCell.nib(), forCellReuseIdentifier: DailyForecastTableViewCell.identifier)
+        dailyForecastTableView.dataSource = self
+        dailyForecastTableView.delegate = self
+        dailyForecastTableView.separatorStyle = .none
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return TestService.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = dailyForecastTableView.dequeueReusableCell(withIdentifier: DailyForecastTableViewCell.identifier) as! DailyForecastTableViewCell
+        cell.setupCell(with: TestService[indexPath.row])
+        return cell
+    }
+}
+
 
     //MARK: - LocationService Extension
 
@@ -102,4 +139,3 @@ extension HomeViewController: LocationServicesDelegate {
         
     }
 }
-

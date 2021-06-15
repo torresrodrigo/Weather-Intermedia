@@ -18,6 +18,10 @@
 		88A2326B26711F9800184A27 /* Home.xib in Resources */ = {isa = PBXBuildFile; fileRef = 88A2326326711F9800184A27 /* Home.xib */; };
 		88A232892671531200184A27 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A232882671531200184A27 /* HomeViewController.swift */; };
 		88A2328D2671564900184A27 /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A2328C2671564900184A27 /* LocationService.swift */; };
+		88A5AFF22678F1AF00C3E551 /* DailyForecastTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A5AFF02678F1AF00C3E551 /* DailyForecastTableViewCell.swift */; };
+		88A5AFF32678F1AF00C3E551 /* DailyForecastTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 88A5AFF12678F1AF00C3E551 /* DailyForecastTableViewCell.xib */; };
+		88A5AFF62679011400C3E551 /* SF-Pro-Rounded-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 88A5AFF52679011400C3E551 /* SF-Pro-Rounded-Bold.otf */; };
+		88A5AFF82679098600C3E551 /* TestService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A5AFF72679098600C3E551 /* TestService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +38,10 @@
 		88A2326326711F9800184A27 /* Home.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = Home.xib; sourceTree = "<group>"; };
 		88A232882671531200184A27 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		88A2328C2671564900184A27 /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
+		88A5AFF02678F1AF00C3E551 /* DailyForecastTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyForecastTableViewCell.swift; sourceTree = "<group>"; };
+		88A5AFF12678F1AF00C3E551 /* DailyForecastTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DailyForecastTableViewCell.xib; sourceTree = "<group>"; };
+		88A5AFF52679011400C3E551 /* SF-Pro-Rounded-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SF-Pro-Rounded-Bold.otf"; path = "../../../../../../../Library/Fonts/SF-Pro-Rounded-Bold.otf"; sourceTree = "<group>"; };
+		88A5AFF72679098600C3E551 /* TestService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,6 +100,7 @@
 			isa = PBXGroup;
 			children = (
 				8899E6FD266FC59900CF0765 /* SF-Pro-Rounded-Regular.ttf */,
+				88A5AFF52679011400C3E551 /* SF-Pro-Rounded-Bold.otf */,
 				8854536C2677D74A001AB5A1 /* SF-Pro-Text-Light.otf */,
 			);
 			path = Fonts;
@@ -111,6 +120,7 @@
 			isa = PBXGroup;
 			children = (
 				88A2328C2671564900184A27 /* LocationService.swift */,
+				88A5AFF72679098600C3E551 /* TestService.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -118,6 +128,7 @@
 		88A2325B26711F5000184A27 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				88A5AFEA2678EF8600C3E551 /* Cells */,
 				88A2326326711F9800184A27 /* Home.xib */,
 			);
 			path = View;
@@ -136,6 +147,23 @@
 				88A232882671531200184A27 /* HomeViewController.swift */,
 			);
 			path = Controller;
+			sourceTree = "<group>";
+		};
+		88A5AFEA2678EF8600C3E551 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				88A5AFF42678F1B500C3E551 /* DailyForecast */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
+		88A5AFF42678F1B500C3E551 /* DailyForecast */ = {
+			isa = PBXGroup;
+			children = (
+				88A5AFF02678F1AF00C3E551 /* DailyForecastTableViewCell.swift */,
+				88A5AFF12678F1AF00C3E551 /* DailyForecastTableViewCell.xib */,
+			);
+			path = DailyForecast;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -196,8 +224,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				8899E6F5266FBFB200CF0765 /* LaunchScreen.storyboard in Resources */,
+				88A5AFF62679011400C3E551 /* SF-Pro-Rounded-Bold.otf in Resources */,
 				88A2326B26711F9800184A27 /* Home.xib in Resources */,
 				8854536D2677D74A001AB5A1 /* SF-Pro-Text-Light.otf in Resources */,
+				88A5AFF32678F1AF00C3E551 /* DailyForecastTableViewCell.xib in Resources */,
 				8899E6FE266FC59900CF0765 /* SF-Pro-Rounded-Regular.ttf in Resources */,
 				8899E6F2266FBFB200CF0765 /* Assets.xcassets in Resources */,
 				8899E6F0266FBFAE00CF0765 /* Main.storyboard in Resources */,
@@ -213,7 +243,9 @@
 			files = (
 				8899E6ED266FBFAE00CF0765 /* ViewController.swift in Sources */,
 				8899E6E9266FBFAE00CF0765 /* AppDelegate.swift in Sources */,
+				88A5AFF22678F1AF00C3E551 /* DailyForecastTableViewCell.swift in Sources */,
 				88A2328D2671564900184A27 /* LocationService.swift in Sources */,
+				88A5AFF82679098600C3E551 /* TestService.swift in Sources */,
 				8899E6EB266FBFAE00CF0765 /* SceneDelegate.swift in Sources */,
 				88A232892671531200184A27 /* HomeViewController.swift in Sources */,
 			);
