@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8854536D2677D74A001AB5A1 /* SF-Pro-Text-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 8854536C2677D74A001AB5A1 /* SF-Pro-Text-Light.otf */; };
 		8899E6E9266FBFAE00CF0765 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8899E6E8266FBFAE00CF0765 /* AppDelegate.swift */; };
 		8899E6EB266FBFAE00CF0765 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8899E6EA266FBFAE00CF0765 /* SceneDelegate.swift */; };
 		8899E6ED266FBFAE00CF0765 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8899E6EC266FBFAE00CF0765 /* ViewController.swift */; };
@@ -20,6 +21,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8854536C2677D74A001AB5A1 /* SF-Pro-Text-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SF-Pro-Text-Light.otf"; path = "../../../../../../../Library/Fonts/SF-Pro-Text-Light.otf"; sourceTree = "<group>"; };
 		8899E6E5266FBFAE00CF0765 /* WeatherApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeatherApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8899E6E8266FBFAE00CF0765 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8899E6EA266FBFAE00CF0765 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -90,6 +92,7 @@
 			isa = PBXGroup;
 			children = (
 				8899E6FD266FC59900CF0765 /* SF-Pro-Rounded-Regular.ttf */,
+				8854536C2677D74A001AB5A1 /* SF-Pro-Text-Light.otf */,
 			);
 			path = Fonts;
 			sourceTree = "<group>";
@@ -194,6 +197,7 @@
 			files = (
 				8899E6F5266FBFB200CF0765 /* LaunchScreen.storyboard in Resources */,
 				88A2326B26711F9800184A27 /* Home.xib in Resources */,
+				8854536D2677D74A001AB5A1 /* SF-Pro-Text-Light.otf in Resources */,
 				8899E6FE266FC59900CF0765 /* SF-Pro-Rounded-Regular.ttf in Resources */,
 				8899E6F2266FBFB200CF0765 /* Assets.xcassets in Resources */,
 				8899E6F0266FBFAE00CF0765 /* Main.storyboard in Resources */,

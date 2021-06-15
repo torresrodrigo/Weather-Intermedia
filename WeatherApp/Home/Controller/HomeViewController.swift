@@ -9,14 +9,30 @@ import UIKit
 
 class HomeViewController: UIViewController {
     
+    // MARK: - IBOutlets
+    
+    @IBOutlet weak var currentLocation: UILabel!
+    @IBOutlet weak var provinceLocation: UILabel!
+    @IBOutlet weak var countryLocation: UILabel!
+    @IBOutlet weak var currentWeatherLocation: UIImageView!
+    @IBOutlet weak var temperatureLocation: UILabel!
+    @IBOutlet weak var rainProbability: UILabel!
+    @IBOutlet weak var windStatus: UILabel!
+    @IBOutlet weak var detailButton: UIButton!
+    @IBOutlet weak var scrollView: UIScrollView!
+    @IBOutlet weak var pageControl: UIPageControl!
+    
+    //MARK: - Services
+    
     let locationService = LocationService()
     
-    @IBOutlet weak var pageControl: UIPageControl!
     override func viewDidLoad() {
         super.viewDidLoad()
         initializeLocationServices()
         setupUI()
     }
+    
+    //MARK: - HomeViewController Events
     
     private func initializeLocationServices() {
         locationService.delegate = self
@@ -24,10 +40,12 @@ class HomeViewController: UIViewController {
     
     private func setupUI() {
         setupPageControl()
+        setupScrollView()
     }
     
 }
 
+    //MARK: - PageControl Extension
 
 extension HomeViewController {
     
@@ -37,6 +55,25 @@ extension HomeViewController {
         self.pageControl.preferredIndicatorImage = UIImage(named: "step")
     }
 }
+
+    //MARK: - Scroll View Extension
+
+extension HomeViewController: UIScrollViewDelegate {
+    
+    func setupScrollView() {
+        scrollView.delegate = self
+    }
+        
+    //Top no bouncing
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView.contentOffset.y < 0 {
+            scrollView.contentOffset.y = 0
+        }
+    }
+    
+}
+
+    //MARK: - LocationService Extension
 
 extension HomeViewController: LocationServicesDelegate {
     
@@ -48,6 +85,7 @@ extension HomeViewController: LocationServicesDelegate {
         locationService.start()
     }
     
+    //Alert for request location permission
     func prompAuthorization() {
         let alert = UIAlertController(title: "Location access is needed to get your current location", message: "Please allow location access", preferredStyle: .alert)
         let settingsAction = UIAlertAction(title: "Settings", style: .default) { _ in
