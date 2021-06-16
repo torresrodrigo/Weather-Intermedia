@@ -21,6 +21,7 @@ class HomeViewController: UIViewController {
     @IBOutlet weak var windStatus: UILabel!
     
     //StackView
+    @IBOutlet weak var hourlyForecastCollectionView: UICollectionView!
     @IBOutlet weak var dailyForecastTableView : UITableView!
     @IBOutlet weak var homeScrollView: UIScrollView!
     
@@ -32,13 +33,15 @@ class HomeViewController: UIViewController {
     
     let locationService = LocationService()
     //Test other values from TableView
-    var TestService = [TestDailyForecast]()
+    var dataServiceDaily = [TestDailyForecast]()
+    var dataServiceHourly = [TestHourlyForecast]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         initializeLocationServices()
         setupUI()
-        self.TestService = createArrayTest()
+        self.dataServiceDaily = createTestDailyForecast()
+        self.dataServiceHourly = createTestHourlyForecast()
     }
     
     //MARK: - HomeViewController Events
@@ -51,6 +54,7 @@ class HomeViewController: UIViewController {
         setupPageControl()
         setupScrollView()
         setupTableView()
+        setupCollectionView()
     }
     
 }
@@ -86,6 +90,38 @@ extension HomeViewController: UIScrollViewDelegate {
         }
     }
 }
+    
+    //MARK: - CollectionView Extension
+
+extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    
+    func setupCollectionView() {
+        hourlyForecastCollectionView.register(HourlyForecastCollectionViewCell.nib(), forCellWithReuseIdentifier: HourlyForecastCollectionViewCell.identifier)
+        hourlyForecastCollectionView.dataSource = self
+        hourlyForecastCollectionView.delegate = self
+        hourlyForecastCollectionView.showsHorizontalScrollIndicator = false
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 70, height: 125)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 16, left: 12, bottom: 0, right: 12)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return dataServiceHourly.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = hourlyForecastCollectionView.dequeueReusableCell(withReuseIdentifier: HourlyForecastCollectionViewCell.identifier, for: indexPath) as! HourlyForecastCollectionViewCell
+        cell.setupCell(with: dataServiceHourly[indexPath.row])
+        return cell
+    }
+    
+    
+}
 
     //MARK: - TableView Extension
 
@@ -96,16 +132,21 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
         dailyForecastTableView.dataSource = self
         dailyForecastTableView.delegate = self
         dailyForecastTableView.separatorStyle = .none
+        dailyForecastTableView.isScrollEnabled = false
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return TestService.count
+        return dataServiceDaily.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = dailyForecastTableView.dequeueReusableCell(withIdentifier: DailyForecastTableViewCell.identifier) as! DailyForecastTableViewCell
-        cell.setupCell(with: TestService[indexPath.row])
+        let cell = dailyForecastTableView.dequeueReusableCell(withIdentifier: DailyForecastTableViewCell.identifier, for: indexPath) as! DailyForecastTableViewCell
+        cell.setupCell(with: dataServiceDaily[indexPath.row])
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 46
     }
 }
 

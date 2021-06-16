@@ -26,7 +26,7 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Dia Semana" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bRs-0v-p51">
-                        <rect key="frame" x="20" y="18" width="119" height="24"/>
+                        <rect key="frame" x="20" y="17" width="111" height="26"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="lessThanOrEqual" constant="120" id="UuR-eV-NAS"/>
                         </constraints>
@@ -56,14 +56,13 @@
                 </subviews>
                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                 <constraints>
-                    <constraint firstAttribute="bottom" secondItem="bRs-0v-p51" secondAttribute="bottom" constant="18" id="FVf-mL-PD6"/>
+                    <constraint firstItem="bRs-0v-p51" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="2Dt-TY-Dh0"/>
                     <constraint firstItem="Yqx-Uy-yE3" firstAttribute="leading" secondItem="HuC-It-4KP" secondAttribute="trailing" constant="6" id="Pme-lp-FF3"/>
                     <constraint firstItem="Yqx-Uy-yE3" firstAttribute="centerY" secondItem="HuC-It-4KP" secondAttribute="centerY" id="Tyr-u8-2q0"/>
                     <constraint firstItem="bRs-0v-p51" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="20" id="UJn-lW-3wp"/>
                     <constraint firstItem="HuC-It-4KP" firstAttribute="centerY" secondItem="bRs-0v-p51" secondAttribute="centerY" id="XmS-jt-HmN"/>
                     <constraint firstItem="HuC-It-4KP" firstAttribute="centerX" secondItem="H2p-sc-9uM" secondAttribute="centerX" id="dmb-If-PFj"/>
                     <constraint firstItem="9Wp-Ql-5SE" firstAttribute="centerY" secondItem="Yqx-Uy-yE3" secondAttribute="centerY" id="ewN-P9-CzX"/>
-                    <constraint firstItem="bRs-0v-p51" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="18" id="hCK-F5-cge"/>
                     <constraint firstAttribute="trailing" secondItem="9Wp-Ql-5SE" secondAttribute="trailing" constant="20" id="m3H-K8-uoS"/>
                 </constraints>
             </tableViewCellContentView>

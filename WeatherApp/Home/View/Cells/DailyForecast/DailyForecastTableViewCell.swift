@@ -16,7 +16,7 @@ class DailyForecastTableViewCell: UITableViewCell {
     @IBOutlet weak var temperatureLabel: UILabel!
     
     
-    //MARK: - Static propierties and Method
+    //MARK: - Static properties and Method
     static let identifier = "DailyForecastTableViewCell"
     static func nib() -> UINib {
         return UINib(nibName: "DailyForecastTableViewCell", bundle: nil)

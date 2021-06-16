@@ -22,6 +22,8 @@
 		88A5AFF32678F1AF00C3E551 /* DailyForecastTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 88A5AFF12678F1AF00C3E551 /* DailyForecastTableViewCell.xib */; };
 		88A5AFF62679011400C3E551 /* SF-Pro-Rounded-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 88A5AFF52679011400C3E551 /* SF-Pro-Rounded-Bold.otf */; };
 		88A5AFF82679098600C3E551 /* TestService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A5AFF72679098600C3E551 /* TestService.swift */; };
+		88A5AFFC2679484800C3E551 /* HourlyForecastCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A5AFFA2679484800C3E551 /* HourlyForecastCollectionViewCell.swift */; };
+		88A5AFFD2679484800C3E551 /* HourlyForecastCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 88A5AFFB2679484800C3E551 /* HourlyForecastCollectionViewCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +44,8 @@
 		88A5AFF12678F1AF00C3E551 /* DailyForecastTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DailyForecastTableViewCell.xib; sourceTree = "<group>"; };
 		88A5AFF52679011400C3E551 /* SF-Pro-Rounded-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SF-Pro-Rounded-Bold.otf"; path = "../../../../../../../Library/Fonts/SF-Pro-Rounded-Bold.otf"; sourceTree = "<group>"; };
 		88A5AFF72679098600C3E551 /* TestService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestService.swift; sourceTree = "<group>"; };
+		88A5AFFA2679484800C3E551 /* HourlyForecastCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourlyForecastCollectionViewCell.swift; sourceTree = "<group>"; };
+		88A5AFFB2679484800C3E551 /* HourlyForecastCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HourlyForecastCollectionViewCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -153,6 +157,7 @@
 			isa = PBXGroup;
 			children = (
 				88A5AFF42678F1B500C3E551 /* DailyForecast */,
+				88A5AFFE2679485100C3E551 /* HourlyForecast */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -164,6 +169,15 @@
 				88A5AFF12678F1AF00C3E551 /* DailyForecastTableViewCell.xib */,
 			);
 			path = DailyForecast;
+			sourceTree = "<group>";
+		};
+		88A5AFFE2679485100C3E551 /* HourlyForecast */ = {
+			isa = PBXGroup;
+			children = (
+				88A5AFFA2679484800C3E551 /* HourlyForecastCollectionViewCell.swift */,
+				88A5AFFB2679484800C3E551 /* HourlyForecastCollectionViewCell.xib */,
+			);
+			path = HourlyForecast;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -225,6 +239,7 @@
 			files = (
 				8899E6F5266FBFB200CF0765 /* LaunchScreen.storyboard in Resources */,
 				88A5AFF62679011400C3E551 /* SF-Pro-Rounded-Bold.otf in Resources */,
+				88A5AFFD2679484800C3E551 /* HourlyForecastCollectionViewCell.xib in Resources */,
 				88A2326B26711F9800184A27 /* Home.xib in Resources */,
 				8854536D2677D74A001AB5A1 /* SF-Pro-Text-Light.otf in Resources */,
 				88A5AFF32678F1AF00C3E551 /* DailyForecastTableViewCell.xib in Resources */,
@@ -243,6 +258,7 @@
 			files = (
 				8899E6ED266FBFAE00CF0765 /* ViewController.swift in Sources */,
 				8899E6E9266FBFAE00CF0765 /* AppDelegate.swift in Sources */,
+				88A5AFFC2679484800C3E551 /* HourlyForecastCollectionViewCell.swift in Sources */,
 				88A5AFF22678F1AF00C3E551 /* DailyForecastTableViewCell.swift in Sources */,
 				88A2328D2671564900184A27 /* LocationService.swift in Sources */,
 				88A5AFF82679098600C3E551 /* TestService.swift in Sources */,
