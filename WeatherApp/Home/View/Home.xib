@@ -22,11 +22,12 @@
                 <outlet property="countryLocation" destination="fqk-mc-C3Z" id="ODD-RI-uIP"/>
                 <outlet property="currentLocation" destination="Gj9-IE-etA" id="5fK-S7-I7u"/>
                 <outlet property="currentWeatherLocation" destination="UwR-Hg-eoh" id="yBg-fj-T3x"/>
+                <outlet property="dailyForecastTableView" destination="LIr-4Z-mi1" id="l92-WM-gp5"/>
                 <outlet property="detailButton" destination="lVq-Wp-ywJ" id="07d-7U-kbW"/>
+                <outlet property="homeScrollView" destination="v6h-H6-cIF" id="paJ-4g-rhn"/>
                 <outlet property="pageControl" destination="LKU-Zl-PPZ" id="qY2-nG-j7T"/>
                 <outlet property="provinceLocation" destination="7C3-Oo-gfb" id="ebB-Wg-EEs"/>
                 <outlet property="rainProbability" destination="XhL-20-cgN" id="b9i-dh-t4Q"/>
-                <outlet property="scrollView" destination="v6h-H6-cIF" id="paJ-4g-rhn"/>
                 <outlet property="temperatureLocation" destination="HLN-o2-Qyi" id="zUw-eb-nYd"/>
                 <outlet property="view" destination="iN0-l3-epB" id="HmK-ik-gfK"/>
                 <outlet property="windStatus" destination="NWV-3C-LwL" id="uzK-ZG-UXX"/>
@@ -41,7 +42,7 @@
                     <rect key="frame" x="0.0" y="44" width="414" height="773"/>
                     <subviews>
                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="IWz-YJ-hxp">
-                            <rect key="frame" x="0.0" y="0.0" width="414" height="190"/>
+                            <rect key="frame" x="0.0" y="0.0" width="414" height="800"/>
                             <subviews>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1OS-3u-bDr" userLabel="HeaderView">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="190"/>
@@ -140,8 +141,33 @@
                                         <constraint firstAttribute="bottom" secondItem="n9m-4A-WcO" secondAttribute="bottom" constant="31" id="zhR-Z3-Khc"/>
                                     </constraints>
                                 </view>
+                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vMc-BB-qb3">
+                                    <rect key="frame" x="0.0" y="190" width="414" height="130"/>
+                                    <color key="backgroundColor" systemColor="labelColor"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="130" id="3HR-x7-poO"/>
+                                    </constraints>
+                                </view>
+                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cmW-VB-CaA" userLabel="DailyView">
+                                    <rect key="frame" x="0.0" y="320" width="414" height="480"/>
+                                    <subviews>
+                                        <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="LIr-4Z-mi1" userLabel="DailyForecastTableView">
+                                            <rect key="frame" x="0.0" y="18" width="414" height="462"/>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            <color key="sectionIndexBackgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </tableView>
+                                    </subviews>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <constraints>
+                                        <constraint firstAttribute="bottom" secondItem="LIr-4Z-mi1" secondAttribute="bottom" id="Iv7-dD-YXy"/>
+                                        <constraint firstItem="LIr-4Z-mi1" firstAttribute="leading" secondItem="cmW-VB-CaA" secondAttribute="leading" id="KwV-ST-AxD"/>
+                                        <constraint firstAttribute="trailing" secondItem="LIr-4Z-mi1" secondAttribute="trailing" id="LJn-Oa-1NJ"/>
+                                        <constraint firstAttribute="height" constant="480" id="cBy-PI-lkS"/>
+                                        <constraint firstItem="LIr-4Z-mi1" firstAttribute="top" secondItem="cmW-VB-CaA" secondAttribute="top" constant="18" id="ly2-Ap-Ymb"/>
+                                    </constraints>
+                                </view>
                             </subviews>
-                            <color key="backgroundColor" systemColor="systemPurpleColor"/>
+                            <color key="backgroundColor" name="Primary"/>
                         </stackView>
                     </subviews>
                     <color key="backgroundColor" name="Primary"/>
@@ -235,8 +261,8 @@
         <namedColor name="Separator">
             <color red="0.83137254901960789" green="0.83137254901960789" blue="0.83137254901960789" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
-        <systemColor name="systemPurpleColor">
-            <color red="0.68627450980392157" green="0.32156862745098042" blue="0.87058823529411766" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        <systemColor name="labelColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
     </resources>
 </document>
