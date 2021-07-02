@@ -26,7 +26,7 @@
                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                 <subviews>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lnt-Rc-cWg">
-                        <rect key="frame" x="12" y="0.0" width="46" height="24"/>
+                        <rect key="frame" x="10.5" y="0.0" width="49" height="24"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="lessThanOrEqual" constant="80" id="cQ0-jz-dYy"/>
                         </constraints>
@@ -35,20 +35,20 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="V0R-ue-o6D">
-                        <rect key="frame" x="20" y="22" width="30" height="14.5"/>
+                        <rect key="frame" x="20.5" y="22" width="29.5" height="14"/>
                         <fontDescription key="fontDescription" name="SFProRounded-Bold" family="SF Pro Rounded" pointSize="12"/>
                         <color key="textColor" name="RainProbabilityText-1"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="W4A-wE-KBD">
-                        <rect key="frame" x="9" y="42" width="52" height="44"/>
+                        <rect key="frame" x="11" y="41.5" width="48" height="40"/>
                         <constraints>
-                            <constraint firstAttribute="width" constant="52" id="9n9-l8-3UK"/>
-                            <constraint firstAttribute="height" constant="44" id="t05-jO-HHu"/>
+                            <constraint firstAttribute="width" constant="48" id="9n9-l8-3UK"/>
+                            <constraint firstAttribute="height" constant="40" id="t05-jO-HHu"/>
                         </constraints>
                     </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="n5T-RF-dmc">
-                        <rect key="frame" x="12" y="92" width="46" height="24"/>
+                        <rect key="frame" x="10.5" y="88" width="49" height="24"/>
                         <fontDescription key="fontDescription" name="SFRounded-Ultralight" family="SF Pro Rounded" pointSize="20"/>
                         <color key="textColor" name="PrimaryText"/>
                         <nil key="highlightedColor"/>
@@ -62,7 +62,7 @@
                 <constraint firstItem="V0R-ue-o6D" firstAttribute="centerX" secondItem="lnt-Rc-cWg" secondAttribute="centerX" id="H1y-Np-c9z"/>
                 <constraint firstItem="n5T-RF-dmc" firstAttribute="centerX" secondItem="W4A-wE-KBD" secondAttribute="centerX" id="Uyq-pN-kqF"/>
                 <constraint firstItem="W4A-wE-KBD" firstAttribute="centerX" secondItem="V0R-ue-o6D" secondAttribute="centerX" id="a42-ty-3V7"/>
-                <constraint firstItem="ZTg-uK-7eu" firstAttribute="bottom" secondItem="n5T-RF-dmc" secondAttribute="bottom" constant="4" id="dqd-rs-45c"/>
+                <constraint firstItem="ZTg-uK-7eu" firstAttribute="bottom" secondItem="n5T-RF-dmc" secondAttribute="bottom" constant="8" id="dqd-rs-45c"/>
                 <constraint firstItem="V0R-ue-o6D" firstAttribute="top" secondItem="lnt-Rc-cWg" secondAttribute="bottom" constant="-2" id="rPr-SR-XEV"/>
                 <constraint firstItem="lnt-Rc-cWg" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="rU3-wV-38g"/>
                 <constraint firstItem="lnt-Rc-cWg" firstAttribute="centerX" secondItem="gTV-IL-0wX" secondAttribute="centerX" id="s2y-TB-afK"/>
@@ -79,7 +79,7 @@
     </objects>
     <resources>
         <namedColor name="Primary">
-            <color red="0.0" green="0.56499999761581421" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.0" green="0.56470588235294117" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="PrimaryText">
             <color red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

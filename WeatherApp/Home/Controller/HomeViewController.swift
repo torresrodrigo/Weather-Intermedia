@@ -7,6 +7,7 @@
 
 import UIKit
 import Charts
+import CoreLocation
 
 class HomeViewController: UIViewController, ChartViewDelegate {
     
@@ -31,7 +32,7 @@ class HomeViewController: UIViewController, ChartViewDelegate {
     
     //StackView
     @IBOutlet weak var hourlyForecastCollectionView: UICollectionView!
-    @IBOutlet weak var dailyForecastTableView : UITableView!
+    @IBOutlet weak var dailyForecastTableView: UITableView!
     @IBOutlet weak var homeScrollView: UIScrollView!
     
     //BotomBar
@@ -45,25 +46,40 @@ class HomeViewController: UIViewController, ChartViewDelegate {
     //MARK: - Services
     let locationService = LocationService()
     
-    //Test data for chartView
-    let months = ["Jan", "Feb", "Mar","Apr", "May", "Jun", "Aug"]
-    let temperatureDataValues : [Double] = [50.0 , 23.0, 32.0 , 10.0 ,40.0 , 23.0 ,17.0]
-    let humidityDataValues : [Double] = [80.0 , 60.0, 10.0 , 50.0 ,40.0 , 25.0 ,60.0]
-    
-    //Test other values from TableView
-    var dataServiceDaily = [TestDailyForecast]()
-    var dataServiceHourly = [TestHourlyForecast]()
+    //Data for update UI
+    var day = [String]()
+    var chartValueTemp = [Double]()
+    var chartValueHumidity = [Double]()
+    var dataHourly = [HourlyData]()
+    var dataDaily = [DailyData]()
+    var dataCurrent: CurrentWeatherBaseData?
+    var dataForecast: ForecastWeatherBaseData?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         initializeLocationServices()
         setupUI()
-        self.dataServiceDaily = createTestDailyForecast()
-        self.dataServiceHourly = createTestHourlyForecast()
         heightHeaderView.constant = 255
     }
     
     //MARK: - HomeViewController Events
+    
+    func updateDataCurrentUI() {
+        currentLocation.text = dataCurrent?.currentLocation
+        temperatureLocation.text = dataCurrent?.main.temp.roundToDecimal(0).removeZerosFromEnd(isPercetange: false)
+        windStatus.text =  "\(String(describing: dataCurrent!.wind.speed.roundToDecimal(1))) m/s"
+        
+    }
+    
+    func updateForecastUI() {
+        let timezoneData = dataForecast?.timezone
+        let timezoneFormatter = timezoneData?.newText(char: "/")
+        let countryName = timezoneFormatter?.firstText()
+        let provinceName = timezoneFormatter?.secondText().replacingOccurrences(of: "_", with: " ")
+        countryLocation.text = countryName
+        provinceLocation.text = provinceName
+        rainProbability.text = dataForecast?.hourly[0].pop.getPercentage().roundToDecimal(0).removeZerosFromEnd(isPercetange: true)
+    }
     
     private func initializeLocationServices() {
         locationService.delegate = self
@@ -75,20 +91,27 @@ class HomeViewController: UIViewController, ChartViewDelegate {
         setupTableView()
         setupCollectionView()
         setupSwitchOff()
-        setupChartView(dataPoints: months, valuesTemperature: temperatureDataValues, valuesHumidity: humidityDataValues)
+    }
+    
+    func updateChartView() {
+        for i in 0...7 {
+            chartValueTemp.append(dataDaily[i].temp.day)
+            chartValueHumidity.append(dataDaily[i].humidity)
+            day.append(dataDaily[i].dt.convertDayForChart())
+        }
+        setupChartView(dataPoints: day, valuesTemperature: chartValueTemp, valuesHumidity: chartValueHumidity)
     }
     
     @IBAction func detailButtonPressed(_ sender: Any) {
         headerIsOpen = !headerIsOpen
-        
         heightHeaderView.constant = headerIsOpen ? 550 : 255
         favoriteCitySwitch.isHidden = headerIsOpen ? false : true
         favoriteCitySwitch.isHidden = headerIsOpen ? false : true
         self.changeButtonIcon()
-        self.chartView.animate(yAxisDuration: 1.5, easingOption: .linear)
+        self.chartView.animate(yAxisDuration: 1, easingOption: .linear)
         
         UIView.animate(
-            withDuration: 0.5,
+            withDuration: 0.3,
             delay: 0.0,
             options: .curveLinear,
             animations: {
@@ -146,6 +169,7 @@ extension HomeViewController: UIScrollViewDelegate {
     
     func setupScrollView() {
         homeScrollView.delegate = self
+        homeScrollView.showsVerticalScrollIndicator = false
     }
         
     //Method for change background color in ScrollView
@@ -173,24 +197,34 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 70, height: 125)
+        return CGSize(width: 60, height: 125)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 16, left: 12, bottom: 0, right: 12)
+        return UIEdgeInsets(top: 8, left: 2, bottom: 8, right: 2)
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return dataServiceHourly.count
+        return dataHourly.prefix(10).count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = hourlyForecastCollectionView.dequeueReusableCell(withReuseIdentifier: HourlyForecastCollectionViewCell.identifier, for: indexPath) as! HourlyForecastCollectionViewCell
-        cell.setupCell(with: dataServiceHourly[indexPath.row])
-        return cell
+        let cellData = dataHourly.prefix(10)[indexPath.item]
+        let cellDataImg = dataHourly[indexPath.item].weather[0].main
+        let cellDataDescrption = dataHourly[indexPath.item].weather[0].description
+        if indexPath.row == 0 {
+            let indexValueImg = dataHourly[0].weather[0].main
+            let indexValueDescription = dataHourly[0].weather[0].description
+            cell.setupCell(with: dataHourly[0], isFirtCell: true)
+            cell.setupImgCell(with: indexValueImg, dataImgDescription: indexValueDescription)
+            return cell
+        } else {
+            cell.setupCell(with: cellData, isFirtCell: false)
+            cell.setupImgCell(with: cellDataImg, dataImgDescription: cellDataDescrption)
+            return cell
+        }
     }
-    
-    
 }
 
     //MARK: - TableView Extension
@@ -206,12 +240,23 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return dataServiceDaily.count
+        return (dataDaily.count - 1)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = dailyForecastTableView.dequeueReusableCell(withIdentifier: DailyForecastTableViewCell.identifier, for: indexPath) as! DailyForecastTableViewCell
-        cell.setupCell(with: dataServiceDaily[indexPath.row])
+        let cellData = dataDaily[indexPath.row + 1]
+        let cellDataImg = dataDaily[indexPath.row + 1].weather[0].main
+        let cellDataDescription = dataDaily[indexPath.row + 1].weather[0].description
+        if indexPath.row == 0 {
+            let indexValueImg = dataDaily[1].weather[0].main
+            let indexValueDescription = dataDaily[1].weather[0].description
+            cell.setupCell(with: dataDaily[1], isFirstCell: true)
+            cell.setupImgCell(with: indexValueImg, dataImgDescription: indexValueDescription)
+        } else {
+            cell.setupCell(with: cellData, isFirstCell: false)
+            cell.setupImgCell(with: cellDataImg, dataImgDescription: cellDataDescription)
+        }
         return cell
     }
     
@@ -219,11 +264,9 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
         return 46
     }
 }
-
-
     //MARK: - LocationService Extension
 
-extension HomeViewController: LocationServicesDelegate {
+extension HomeViewController: LocationServicesDelegate  {
     
     func promptAuthorizationAction() {
         prompAuthorization()
@@ -231,6 +274,42 @@ extension HomeViewController: LocationServicesDelegate {
     
     func didAuthorize() {
         locationService.start()
+        locationService.locationManager(locationService.locationManager, didUpdateLocations: [locationService.locationManager.location!])
+        let lat = String(describing: locationService.locationManager.location!.coordinate.latitude)
+        let lon = String(describing: locationService.locationManager.location!.coordinate.longitude)
+        let paramsLocation : [String : String] = ["lat": lat, "lon": lon]
+        
+        //Get CurrentWeatherData
+        NetworkService.shared.getCurrentWeatherData(params: paramsLocation) { response in
+            switch response {
+            case .success(let response):
+                self.dataCurrent = response
+                DispatchQueue.main.async { [weak self] in
+                    self?.updateDataCurrentUI()
+                }
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
+        
+        //Get ForecastWeatherData
+        NetworkService.shared.getAllWeatherData(params: paramsLocation) { response in
+            switch response {
+            case .success(let response):
+                self.dataForecast = response
+                self.dataHourly = response.hourly
+                self.dataDaily = response.daily
+                print(response)
+                DispatchQueue.main.async { [weak self] in
+                    self?.updateForecastUI()
+                    self?.hourlyForecastCollectionView.reloadData()
+                    self?.dailyForecastTableView.reloadData()
+                    self?.updateChartView()
+                }
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
     }
     
     //Alert for request location permission
@@ -247,6 +326,5 @@ extension HomeViewController: LocationServicesDelegate {
         alert.addAction(cancelAction)
         alert.preferredAction = settingsAction
         present(alert, animated: true, completion: nil)
-        
     }
 }
