@@ -93,7 +93,7 @@ class HomeViewController: UIViewController, ChartViewDelegate {
         setupSwitchOff()
     }
     
-    func updateChartView() {
+    func updateValuesChartView() {
         for i in 0...7 {
             chartValueTemp.append(dataDaily[i].temp.day)
             chartValueHumidity.append(dataDaily[i].humidity)
@@ -102,10 +102,14 @@ class HomeViewController: UIViewController, ChartViewDelegate {
         setupChartView(dataPoints: day, valuesTemperature: chartValueTemp, valuesHumidity: chartValueHumidity)
     }
     
+    @IBAction func searchCityButtonPressed(_ sender: Any) {
+        let searchCity = SearchCityViewController(nibName: "SearchCityViewController", bundle: nil)
+        self.presentOnRoot(with: searchCity)
+    }
+    
     @IBAction func detailButtonPressed(_ sender: Any) {
         headerIsOpen = !headerIsOpen
         heightHeaderView.constant = headerIsOpen ? 550 : 255
-        favoriteCitySwitch.isHidden = headerIsOpen ? false : true
         favoriteCitySwitch.isHidden = headerIsOpen ? false : true
         self.changeButtonIcon()
         self.chartView.animate(yAxisDuration: 1, easingOption: .linear)
@@ -157,6 +161,7 @@ extension HomeViewController {
 extension HomeViewController {
     
     func setupPageControl() {
+        self.pageControl.numberOfPages = 2
         self.pageControl.backgroundStyle = .minimal
         self.pageControl.setIndicatorImage(UIImage(named: "location-arrow-solid"), forPage: 0)
         self.pageControl.preferredIndicatorImage = UIImage(named: "step")
@@ -170,6 +175,7 @@ extension HomeViewController: UIScrollViewDelegate {
     func setupScrollView() {
         homeScrollView.delegate = self
         homeScrollView.showsVerticalScrollIndicator = false
+        homeScrollView.isDirectionalLockEnabled = false
     }
         
     //Method for change background color in ScrollView
@@ -304,7 +310,7 @@ extension HomeViewController: LocationServicesDelegate  {
                     self?.updateForecastUI()
                     self?.hourlyForecastCollectionView.reloadData()
                     self?.dailyForecastTableView.reloadData()
-                    self?.updateChartView()
+                    self?.updateValuesChartView()
                 }
             case .failure(let error):
                 print(error.localizedDescription)

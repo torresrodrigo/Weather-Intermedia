@@ -49,8 +49,6 @@ class DailyForecastTableViewCell: UITableViewCell {
     func setupImgCell(with dataString: String?, dataImgDescription: String?) {
         if let stringData = getImage(dataImg: dataString, dataDescription: dataImgDescription) {
             weatherImg.image = stringData
-        } else {
-            print("Not Image")
         }
     }
 
