@@ -9,7 +9,7 @@ import UIKit
 import Charts
 import CoreLocation
 
-class HomeViewController: UIViewController, ChartViewDelegate {
+class LocationDetailViewController: UIViewController, ChartViewDelegate {
     
     // MARK: - IBOutlets
     
@@ -41,12 +41,14 @@ class HomeViewController: UIViewController, ChartViewDelegate {
     weak var axisFormatDelegate: IAxisValueFormatter?
     
     //MARK: - Properties
+    var locationIndex = 0
     var headerIsOpen = false
     
     //MARK: - Services
     let locationService = LocationService()
     
     //Data for update UI
+    var pages = Int()
     var day = [String]()
     var chartValueTemp = [Double]()
     var chartValueHumidity = [Double]()
@@ -54,21 +56,23 @@ class HomeViewController: UIViewController, ChartViewDelegate {
     var dataDaily = [DailyData]()
     var dataCurrent: CurrentWeatherBaseData?
     var dataForecast: ForecastWeatherBaseData?
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        initializeLocationServices()
         setupUI()
-        heightHeaderView.constant = 255
+        getDataByLocation()
     }
     
     //MARK: - HomeViewController Events
     
+    func updateWhenGetData() {
+        updateDataCurrentUI()
+        //updateForecastUI()
+    }
+    
     func updateDataCurrentUI() {
         currentLocation.text = dataCurrent?.currentLocation
         temperatureLocation.text = dataCurrent?.main.temp.roundToDecimal(0).removeZerosFromEnd(isPercetange: false)
-        windStatus.text =  "\(String(describing: dataCurrent!.wind.speed.roundToDecimal(1))) m/s"
-        
+        windStatus.text =  "\(String(describing: dataCurrent?.wind.speed.roundToDecimal(1))) m/s"
     }
     
     func updateForecastUI() {
@@ -80,12 +84,9 @@ class HomeViewController: UIViewController, ChartViewDelegate {
         provinceLocation.text = provinceName
         rainProbability.text = dataForecast?.hourly[0].pop.getPercentage().roundToDecimal(0).removeZerosFromEnd(isPercetange: true)
     }
-    
-    private func initializeLocationServices() {
-        locationService.delegate = self
-    }
-    
+
     private func setupUI() {
+        heightHeaderView.constant = 255
         setupPageControl()
         setupScrollView()
         setupTableView()
@@ -129,7 +130,8 @@ class HomeViewController: UIViewController, ChartViewDelegate {
     private func changeButtonIcon() {
         if !headerIsOpen {
             self.detailButton.setImage(UIImage(named: "ButtonsClose"), for: .normal)
-        } else {
+        }
+        else {
             self.detailButton.setImage(UIImage(named: "ButtonsOpen"), for: .normal)
         }
     }
@@ -138,7 +140,7 @@ class HomeViewController: UIViewController, ChartViewDelegate {
     
     //MARK: - Switch Extension
 
-extension HomeViewController {
+extension LocationDetailViewController {
     private func setupSwitchOff() {
         if favoriteCitySwitch.isOn == false {
             favoriteCitySwitch.tintColor = UIColor(named: "SwitchOff")
@@ -150,7 +152,8 @@ extension HomeViewController {
     @IBAction func favoriteCityPressed(_ sender: Any) {
         if favoriteCitySwitch.isOn {
             favoriteCitySwitch.onTintColor = UIColor(named: "SwitchOn")
-        } else  {
+        }
+        else {
             setupSwitchOff()
         }
     }
@@ -158,10 +161,10 @@ extension HomeViewController {
 
     //MARK: - PageControl Extension
 
-extension HomeViewController {
+extension LocationDetailViewController {
     
     func setupPageControl() {
-        self.pageControl.numberOfPages = 2
+        self.pageControl.numberOfPages = pages + 1
         self.pageControl.backgroundStyle = .minimal
         self.pageControl.setIndicatorImage(UIImage(named: "location-arrow-solid"), forPage: 0)
         self.pageControl.preferredIndicatorImage = UIImage(named: "step")
@@ -170,7 +173,7 @@ extension HomeViewController {
 
     //MARK: - Scroll View Extension
 
-extension HomeViewController: UIScrollViewDelegate {
+extension LocationDetailViewController: UIScrollViewDelegate {
     
     func setupScrollView() {
         homeScrollView.delegate = self
@@ -193,7 +196,7 @@ extension HomeViewController: UIScrollViewDelegate {
     
     //MARK: - CollectionView Extension
 
-extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+extension LocationDetailViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func setupCollectionView() {
         hourlyForecastCollectionView.register(HourlyForecastCollectionViewCell.nib(), forCellWithReuseIdentifier: HourlyForecastCollectionViewCell.identifier)
@@ -216,6 +219,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = hourlyForecastCollectionView.dequeueReusableCell(withReuseIdentifier: HourlyForecastCollectionViewCell.identifier, for: indexPath) as! HourlyForecastCollectionViewCell
+        
         let cellData = dataHourly.prefix(10)[indexPath.item]
         let cellDataImg = dataHourly[indexPath.item].weather[0].main
         let cellDataDescrption = dataHourly[indexPath.item].weather[0].description
@@ -225,7 +229,8 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
             cell.setupCell(with: dataHourly[0], isFirtCell: true)
             cell.setupImgCell(with: indexValueImg, dataImgDescription: indexValueDescription)
             return cell
-        } else {
+        }
+        else {
             cell.setupCell(with: cellData, isFirtCell: false)
             cell.setupImgCell(with: cellDataImg, dataImgDescription: cellDataDescrption)
             return cell
@@ -235,7 +240,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
 
     //MARK: - TableView Extension
 
-extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
+extension LocationDetailViewController: UITableViewDelegate, UITableViewDataSource {
     
     func setupTableView() {
         dailyForecastTableView.register(DailyForecastTableViewCell.nib(), forCellReuseIdentifier: DailyForecastTableViewCell.identifier)
@@ -259,7 +264,8 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
             let indexValueDescription = dataDaily[1].weather[0].description
             cell.setupCell(with: dataDaily[1], isFirstCell: true)
             cell.setupImgCell(with: indexValueImg, dataImgDescription: indexValueDescription)
-        } else {
+        }
+        else {
             cell.setupCell(with: cellData, isFirstCell: false)
             cell.setupImgCell(with: cellDataImg, dataImgDescription: cellDataDescription)
         }
@@ -272,26 +278,26 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
 }
     //MARK: - LocationService Extension
 
-extension HomeViewController: LocationServicesDelegate  {
+extension LocationDetailViewController {
     
-    func promptAuthorizationAction() {
-        prompAuthorization()
-    }
-    
-    func didAuthorize() {
-        locationService.start()
+    func getDataByLocation() {
         locationService.locationManager(locationService.locationManager, didUpdateLocations: [locationService.locationManager.location!])
         let lat = String(describing: locationService.locationManager.location!.coordinate.latitude)
         let lon = String(describing: locationService.locationManager.location!.coordinate.longitude)
-        let paramsLocation : [String : String] = ["lat": lat, "lon": lon]
+        let paramsByLocation : [String : String] = ["lat": lat, "lon": lon]
+        
         
         //Get CurrentWeatherData
-        NetworkService.shared.getCurrentWeatherData(params: paramsLocation) { response in
+        NetworkService.shared.getCurrentWeatherData(params: paramsByLocation) { response in
             switch response {
             case .success(let response):
-                self.dataCurrent = response
+                let pageViewController = UIApplication.shared.windows.first?.rootViewController as! PaginationViewController
+                pageViewController.dataCurrentLocation.append(response)
+                self.dataCurrent = pageViewController.dataCurrentLocation[self.locationIndex]
+                self.pages = pageViewController.dataCurrentLocation.count
+                
                 DispatchQueue.main.async { [weak self] in
-                    self?.updateDataCurrentUI()
+                    self?.updateWhenGetData()
                 }
             case .failure(let error):
                 print(error.localizedDescription)
@@ -299,12 +305,14 @@ extension HomeViewController: LocationServicesDelegate  {
         }
         
         //Get ForecastWeatherData
-        NetworkService.shared.getAllWeatherData(params: paramsLocation) { response in
+        NetworkService.shared.getAllWeatherData(params: paramsByLocation) { response in
             switch response {
             case .success(let response):
-                self.dataForecast = response
-                self.dataHourly = response.hourly
-                self.dataDaily = response.daily
+                let pageViewController = UIApplication.shared.windows.first?.rootViewController as! PaginationViewController
+                pageViewController.dataForecastLocation.append(response)
+                self.dataForecast = pageViewController.dataForecastLocation[self.locationIndex]
+                self.dataHourly = pageViewController.dataForecastLocation[self.locationIndex].hourly
+                self.dataDaily = pageViewController.dataForecastLocation[self.locationIndex].daily
                 print(response)
                 DispatchQueue.main.async { [weak self] in
                     self?.updateForecastUI()
@@ -316,21 +324,5 @@ extension HomeViewController: LocationServicesDelegate  {
                 print(error.localizedDescription)
             }
         }
-    }
-    
-    //Alert for request location permission
-    func prompAuthorization() {
-        let alert = UIAlertController(title: "Location access is needed to get your current location", message: "Please allow location access", preferredStyle: .alert)
-        let settingsAction = UIAlertAction(title: "Settings", style: .default) { _ in
-            UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:], completionHandler: nil)
-        }
-        let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: { [weak self] _ in
-            exit(1)
-        })
-        
-        alert.addAction(settingsAction)
-        alert.addAction(cancelAction)
-        alert.preferredAction = settingsAction
-        present(alert, animated: true, completion: nil)
     }
 }

@@ -17,7 +17,7 @@
         </array>
     </customFonts>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="HomeViewController">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="LocationDetailViewController">
             <connections>
                 <outlet property="chartLabel" destination="Vpm-MM-KbJ" id="OmY-NU-j0C"/>
                 <outlet property="chartView" destination="M52-Cm-d5m" id="7XL-wo-YtN"/>
@@ -55,13 +55,13 @@
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="550"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HLN-o2-Qyi">
-                                            <rect key="frame" x="24" y="187.5" width="21.5" height="33.5"/>
+                                            <rect key="frame" x="24" y="186" width="23.5" height="33"/>
                                             <fontDescription key="fontDescription" name="SFRounded-Ultralight" family="SF Pro Rounded" pointSize="28"/>
                                             <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fqk-mc-C3Z">
-                                            <rect key="frame" x="20" y="152.5" width="11" height="17"/>
+                                            <rect key="frame" x="20" y="151.5" width="12" height="16.5"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" relation="lessThanOrEqual" constant="200" id="RQY-kn-Fdb"/>
                                             </constraints>
@@ -70,7 +70,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="..." lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7C3-Oo-gfb">
-                                            <rect key="frame" x="20" y="133.5" width="11" height="17"/>
+                                            <rect key="frame" x="20" y="133" width="12" height="16.5"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" relation="lessThanOrEqual" constant="100" id="fTw-0B-GRL"/>
                                             </constraints>
@@ -79,7 +79,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="...." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Gj9-IE-etA">
-                                            <rect key="frame" x="24" y="80" width="28.5" height="33.5"/>
+                                            <rect key="frame" x="24" y="80" width="31.5" height="33"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" relation="lessThanOrEqual" constant="200" id="axh-5G-CVQ"/>
                                             </constraints>
@@ -95,25 +95,25 @@
                                             </constraints>
                                         </imageView>
                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="umbrella" translatesAutoresizingMaskIntoConstraints="NO" id="8P7-Yn-w5U">
-                                            <rect key="frame" x="87.5" y="196.5" width="16" height="16"/>
+                                            <rect key="frame" x="89.5" y="194.5" width="16" height="16"/>
                                         </imageView>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="100%" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XhL-20-cgN">
-                                            <rect key="frame" x="111.5" y="195.5" width="39" height="18"/>
+                                            <rect key="frame" x="113.5" y="194" width="40.5" height="17.5"/>
                                             <fontDescription key="fontDescription" name="SFProText-Light" family="SF Pro Text" pointSize="15"/>
                                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="wind" translatesAutoresizingMaskIntoConstraints="NO" id="n9m-4A-WcO">
-                                            <rect key="frame" x="166.5" y="197" width="20.5" height="15"/>
+                                            <rect key="frame" x="170" y="195" width="20.5" height="15"/>
                                         </imageView>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="100%" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NWV-3C-LwL">
-                                            <rect key="frame" x="196" y="195.5" width="39" height="18"/>
+                                            <rect key="frame" x="199.5" y="194" width="40.5" height="17.5"/>
                                             <fontDescription key="fontDescription" name="SFProText-Light" family="SF Pro Text" pointSize="15"/>
                                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lVq-Wp-ywJ">
-                                            <rect key="frame" x="353.5" y="163" width="44" height="82.5"/>
+                                            <rect key="frame" x="353.5" y="163" width="44" height="79"/>
                                             <color key="tintColor" name="SelectedPage+Grafics"/>
                                             <state key="normal" image="ButtonsClose"/>
                                             <connections>
@@ -121,26 +121,26 @@
                                             </connections>
                                         </button>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Temperature vs. humidity" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Vpm-MM-KbJ">
-                                            <rect key="frame" x="102.5" y="272" width="209" height="24"/>
+                                            <rect key="frame" x="94.5" y="270" width="225" height="23.5"/>
                                             <fontDescription key="fontDescription" name="SFRounded-Ultralight" family="SF Pro Rounded" pointSize="20"/>
                                             <color key="textColor" name="PrimaryText"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Favorite city" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WU6-hT-2fD">
-                                            <rect key="frame" x="12" y="511" width="85.5" height="30"/>
+                                            <rect key="frame" x="12" y="509" width="93" height="27"/>
                                             <fontDescription key="fontDescription" name="SFRounded-Ultralight" family="SF Pro Rounded" pointSize="17"/>
                                             <color key="textColor" name="PrimaryText"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="zt1-qa-T1A">
-                                            <rect key="frame" x="349" y="510.5" width="51" height="31"/>
+                                            <rect key="frame" x="349" y="507" width="51" height="31"/>
                                             <color key="onTintColor" name="SwitchOn"/>
                                             <connections>
                                                 <action selector="favoriteCityPressed:" destination="-1" eventType="valueChanged" id="WmX-Gc-nCn"/>
                                             </connections>
                                         </switch>
                                         <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="M52-Cm-d5m" customClass="CombinedChartView" customModule="Charts">
-                                            <rect key="frame" x="10" y="303.5" width="394" height="168"/>
+                                            <rect key="frame" x="10" y="301" width="394" height="168"/>
                                             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="394" id="3m4-as-596"/>

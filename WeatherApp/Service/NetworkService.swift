@@ -42,7 +42,6 @@ class NetworkService {
                 decoder.keyDecodingStrategy = .convertFromSnakeCase
                 do {
                     let results = try decoder.decode(ForecastWeatherBaseData.self, from: data)
-                    print()
                     completed(.success(results))
                 } catch {
                     completed(.failure(error))

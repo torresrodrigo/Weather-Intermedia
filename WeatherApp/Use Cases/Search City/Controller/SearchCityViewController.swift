@@ -114,6 +114,9 @@ extension SearchCityViewController: UITableViewDelegate, UITableViewDataSource {
             let lat = coordinate.latitude
             let lon = coordinate.longitude
             
+            let paginationController = PaginationViewController()
+            
+            
             print(lat)
             print(lon)
             
