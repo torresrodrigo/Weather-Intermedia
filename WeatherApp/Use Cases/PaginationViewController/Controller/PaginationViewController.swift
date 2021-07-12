@@ -10,9 +10,8 @@ import CoreLocation
 
 class PaginationViewController: UIPageViewController {
     
+    let userDefault = UserDefaults.standard
     var weatherLocationsData = [WeatherLocations]()
-    var dataCurrentLocation = [CurrentWeatherBaseData]()
-    var dataForecastLocation = [ForecastWeatherBaseData]()
     var locationService = LocationService()
     
     override init(transitionStyle style: UIPageViewController.TransitionStyle, navigationOrientation: UIPageViewController.NavigationOrientation, options: [UIPageViewController.OptionsKey : Any]? = nil) {
@@ -25,16 +24,21 @@ class PaginationViewController: UIPageViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupPaginationController()
         initializeLocationServices()
-        setViewControllers([createLocationDetailViewController(forPage: 0)], direction: .forward, animated: true, completion: nil)
+        setViewControllers([createLocationDetailViewController(forPage: weatherLocationsData.count)], direction: .forward, animated: true, completion: nil)
     }
     
     func createLocationDetailViewController(forPage page: Int) -> LocationDetailViewController {
         let detailViewController = LocationDetailViewController(nibName: "LocationDetail", bundle: nil)
         detailViewController.locationIndex = page
         return detailViewController
+    }
+    
+    func createNewLocation(withLat locationLat: String, withLon locationLon: String, withName locationName: String) -> WeatherLocations {
+        let params: [String : String] = ["lat": locationLat, "lon": locationLon]
+        let newLocation = WeatherLocations(params: params, name: locationName)
+        return newLocation
     }
 }
 
@@ -55,7 +59,7 @@ extension PaginationViewController: UIPageViewControllerDelegate, UIPageViewCont
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
         if let currentViewController = viewController as? LocationDetailViewController {
-            if currentViewController.locationIndex < dataCurrentLocation.count - 1 {
+            if currentViewController.locationIndex < weatherLocationsData.count - 1 {
                 return createLocationDetailViewController(forPage: currentViewController.locationIndex + 1)
             }
         }

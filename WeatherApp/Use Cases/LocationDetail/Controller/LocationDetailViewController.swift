@@ -43,6 +43,7 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
     //MARK: - Properties
     var locationIndex = 0
     var headerIsOpen = false
+    let pageViewController = UIApplication.shared.windows.first?.rootViewController as! PaginationViewController
     
     //MARK: - Services
     let locationService = LocationService()
@@ -72,7 +73,7 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
     func updateDataCurrentUI() {
         currentLocation.text = dataCurrent?.currentLocation
         temperatureLocation.text = dataCurrent?.main.temp.roundToDecimal(0).removeZerosFromEnd(isPercetange: false)
-        windStatus.text =  "\(String(describing: dataCurrent?.wind.speed.roundToDecimal(1))) m/s"
+        windStatus.text =  "\(String(describing: dataCurrent!.wind.speed.roundToDecimal(1))) m/s"
     }
     
     func updateForecastUI() {
@@ -164,7 +165,6 @@ extension LocationDetailViewController {
 extension LocationDetailViewController {
     
     func setupPageControl() {
-        self.pageControl.numberOfPages = pages + 1
         self.pageControl.backgroundStyle = .minimal
         self.pageControl.setIndicatorImage(UIImage(named: "location-arrow-solid"), forPage: 0)
         self.pageControl.preferredIndicatorImage = UIImage(named: "step")
@@ -282,20 +282,20 @@ extension LocationDetailViewController {
     
     func getDataByLocation() {
         locationService.locationManager(locationService.locationManager, didUpdateLocations: [locationService.locationManager.location!])
-        let lat = String(describing: locationService.locationManager.location!.coordinate.latitude)
-        let lon = String(describing: locationService.locationManager.location!.coordinate.longitude)
-        let paramsByLocation : [String : String] = ["lat": lat, "lon": lon]
-        
+        let paginationViewController = UIApplication.shared.windows.first?.rootViewController as! PaginationViewController
+        let latCoreLocation = String(describing: locationService.locationManager.location!.coordinate.latitude)
+        let lonCoreLocation = String(describing: locationService.locationManager.location!.coordinate.longitude)
+        let currentData = paginationViewController.createNewLocation(withLat: latCoreLocation, withLon: lonCoreLocation, withName: "Current")
+        if paginationViewController.weatherLocationsData.count == 0 {
+            paginationViewController.weatherLocationsData.append(currentData)
+        }
+        let paramsLocation: [String : String] = paginationViewController.weatherLocationsData[locationIndex].params
         
         //Get CurrentWeatherData
-        NetworkService.shared.getCurrentWeatherData(params: paramsByLocation) { response in
+        NetworkService.shared.getCurrentWeatherData(params: paramsLocation) { response in
             switch response {
             case .success(let response):
-                let pageViewController = UIApplication.shared.windows.first?.rootViewController as! PaginationViewController
-                pageViewController.dataCurrentLocation.append(response)
-                self.dataCurrent = pageViewController.dataCurrentLocation[self.locationIndex]
-                self.pages = pageViewController.dataCurrentLocation.count
-                
+                self.dataCurrent = response
                 DispatchQueue.main.async { [weak self] in
                     self?.updateWhenGetData()
                 }
@@ -305,16 +305,18 @@ extension LocationDetailViewController {
         }
         
         //Get ForecastWeatherData
-        NetworkService.shared.getAllWeatherData(params: paramsByLocation) { response in
+        NetworkService.shared.getAllWeatherData(params: paramsLocation) { response in
             switch response {
             case .success(let response):
-                let pageViewController = UIApplication.shared.windows.first?.rootViewController as! PaginationViewController
-                pageViewController.dataForecastLocation.append(response)
-                self.dataForecast = pageViewController.dataForecastLocation[self.locationIndex]
-                self.dataHourly = pageViewController.dataForecastLocation[self.locationIndex].hourly
-                self.dataDaily = pageViewController.dataForecastLocation[self.locationIndex].daily
+                self.dataForecast = response
                 print(response)
+                self.dataHourly = self.dataForecast!.hourly
+                self.dataDaily = self.dataForecast!.daily
                 DispatchQueue.main.async { [weak self] in
+                    let pageViewController = UIApplication.shared.windows.first?.rootViewController as! PaginationViewController
+                    self?.pageControl.isHidden = false
+                    self?.pageControl.numberOfPages = (pageViewController.weatherLocationsData.count)
+                    self?.pageControl.currentPage = self!.locationIndex
                     self?.updateForecastUI()
                     self?.hourlyForecastCollectionView.reloadData()
                     self?.dailyForecastTableView.reloadData()

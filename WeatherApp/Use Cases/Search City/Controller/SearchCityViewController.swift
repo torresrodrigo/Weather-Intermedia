@@ -8,6 +8,7 @@
 import UIKit
 import MapKit
 
+
 class SearchCityViewController: UIViewController {
 
     @IBOutlet weak var searchBar: UISearchBar!
@@ -22,7 +23,7 @@ class SearchCityViewController: UIViewController {
         setupUI()
         setupSearchBar()
         setupTableView()
-        self.hideKeyboardWhenTappedAround()
+        //self.hideKeyboardWhenTappedAround()
     }
     
     func setupUI() {
@@ -58,6 +59,7 @@ extension SearchCityViewController: MKLocalSearchCompleterDelegate {
 
 
 extension SearchCityViewController: UISearchBarDelegate {
+    
     func setupSearchBar() {
         searchBar.delegate = self
         searchCompleter.delegate = self
@@ -74,7 +76,6 @@ extension SearchCityViewController: UITableViewDelegate, UITableViewDataSource {
     func setupTableView() {
         resultsTableView.delegate = self
         resultsTableView.dataSource = self
-        //resultsTableView.register(ResultTableViewCell.nib(), forCellReuseIdentifier: ResultTableViewCell.identifier)
         resultsTableView.isScrollEnabled = false
     }
     
@@ -84,45 +85,36 @@ extension SearchCityViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let searchData = searchResults[indexPath.row]
-        //let cell = resultsTableView.dequeueReusableCell(withIdentifier: ResultTableViewCell.identifier, for: indexPath) as! ResultTableViewCell
         let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+        cell.selectionStyle = .none
         cell.textLabel?.text = "\(searchData.title), \(searchData.subtitle)"
         cell.textLabel?.font = UIFont.italicSystemFont(ofSize: 18)
-        //cell.detailTextLabel?.text = searchData.subtitle
-        //cell.detailTextLabel?.font = UIFont.italicSystemFont(ofSize: 16)
         return cell
     }
     
-    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        resultsTableView.deselectRow(at: indexPath, animated: true)
-        
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let result = searchResults[indexPath.row]
         let searchRequest = MKLocalSearch.Request(completion: result)
         
-        let search = MKLocalSearch(request: searchRequest)
-        search.start { response, error in
-            guard let coordinate = response?.mapItems[0].placemark.coordinate else {
-                return
-            }
-            
-            guard let name = response?.mapItems[0].name else {
-                return
-            }
-            
-            print(name)
-            
-            let lat = coordinate.latitude
-            let lon = coordinate.longitude
-            
-            let paginationController = PaginationViewController()
-            
-            
-            print(lat)
-            print(lon)
-            
+            let search = MKLocalSearch(request: searchRequest)
+            search.start { response, error in
+                guard let coordinate = response?.mapItems[0].placemark.coordinate else {
+                    return
+                }
+                
+                guard let name = response?.mapItems[0].name else {
+                    return
+                }
+                
+                let lat = String(describing: coordinate.latitude)
+                let lon = String(describing: coordinate.longitude)
+                
+                let paginationViewController = UIApplication.shared.windows.first?.rootViewController as! PaginationViewController
+                let newLocationAdded = paginationViewController.createNewLocation(withLat: lat, withLon: lon, withName: name)
+                paginationViewController.weatherLocationsData.append(newLocationAdded)
+                let newViewController = paginationViewController.createLocationDetailViewController(forPage: paginationViewController.weatherLocationsData.count - 1)
+                self.dismiss(animated: true, completion: nil)
+                paginationViewController.setViewControllers([newViewController], direction: .forward, animated: true, completion: nil)
         }
-        
     }
-    
 }
-

@@ -20,6 +20,7 @@
 		884500CF2683BF660053ECF7 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884500CE2683BF660053ECF7 /* NetworkService.swift */; };
 		885373C0269623DD0082F36D /* WeatherLocations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 885373BF269623DD0082F36D /* WeatherLocations.swift */; };
 		8854536D2677D74A001AB5A1 /* SF-Pro-Text-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 8854536C2677D74A001AB5A1 /* SF-Pro-Text-Light.otf */; };
+		885A8F33269795E3008E6A27 /* ViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 885A8F32269795E3008E6A27 /* ViewController+Extensions.swift */; };
 		886F21A12684ACB000F049AE /* CurrentWeatherBaseData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886F21A02684ACB000F049AE /* CurrentWeatherBaseData.swift */; };
 		88725A272686847500741174 /* Double+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88725A262686847500741174 /* Double+Extensions.swift */; };
 		888AC75226820C4800CA0D7B /* FormatterChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888AC75126820C4800CA0D7B /* FormatterChart.swift */; };
@@ -62,6 +63,7 @@
 		884500CE2683BF660053ECF7 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
 		885373BF269623DD0082F36D /* WeatherLocations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherLocations.swift; sourceTree = "<group>"; };
 		8854536C2677D74A001AB5A1 /* SF-Pro-Text-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SF-Pro-Text-Light.otf"; path = "../../../../../../../Library/Fonts/SF-Pro-Text-Light.otf"; sourceTree = "<group>"; };
+		885A8F32269795E3008E6A27 /* ViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+Extensions.swift"; sourceTree = "<group>"; };
 		886F21A02684ACB000F049AE /* CurrentWeatherBaseData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentWeatherBaseData.swift; sourceTree = "<group>"; };
 		88725A262686847500741174 /* Double+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Double+Extensions.swift"; sourceTree = "<group>"; };
 		888AC75126820C4800CA0D7B /* FormatterChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormatterChart.swift; sourceTree = "<group>"; };
@@ -183,8 +185,25 @@
 				88725A262686847500741174 /* Double+Extensions.swift */,
 				8833B0AE2689F47A007D2296 /* String+Extensions.swift */,
 				88B18D7E268DF4D400646BDF /* Int+Extensions.swift */,
+				885A8F32269795E3008E6A27 /* ViewController+Extensions.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		885A8F3026972FD4008E6A27 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				88A091582694B3C700EC75BA /* PaginationViewController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		885A8F3126972FDD008E6A27 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				88A091592694B3C700EC75BA /* PaginationViewController.xib */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 		888AC75026820C1700CA0D7B /* Supporting Files */ = {
@@ -254,8 +273,8 @@
 		88A091572694B18700EC75BA /* PaginationViewController */ = {
 			isa = PBXGroup;
 			children = (
-				88A091582694B3C700EC75BA /* PaginationViewController.swift */,
-				88A091592694B3C700EC75BA /* PaginationViewController.xib */,
+				885A8F3026972FD4008E6A27 /* Controller */,
+				885A8F3126972FDD008E6A27 /* View */,
 			);
 			path = PaginationViewController;
 			sourceTree = "<group>";
@@ -479,6 +498,7 @@
 				88311812269330A500AAC07F /* SearchCityViewController.swift in Sources */,
 				88A5AFF22678F1AF00C3E551 /* DailyForecastTableViewCell.swift in Sources */,
 				88A5F64B268BBA150057B061 /* Temp.swift in Sources */,
+				885A8F33269795E3008E6A27 /* ViewController+Extensions.swift in Sources */,
 				88449F06267CC6FF0087AD79 /* HomeViewController+Extension.swift in Sources */,
 				88A5F649268BB7D40057B061 /* DailyData.swift in Sources */,
 				88A2328D2671564900184A27 /* LocationService.swift in Sources */,

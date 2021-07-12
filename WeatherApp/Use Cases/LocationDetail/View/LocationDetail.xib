@@ -132,7 +132,7 @@
                                             <color key="textColor" name="PrimaryText"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="zt1-qa-T1A">
+                                        <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zt1-qa-T1A">
                                             <rect key="frame" x="349" y="507" width="51" height="31"/>
                                             <color key="onTintColor" name="SwitchOn"/>
                                             <connections>
@@ -256,10 +256,10 @@
                         <constraint firstAttribute="height" constant="1" id="bUG-Kg-6Pl"/>
                     </constraints>
                 </view>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="U8h-3w-Upk" userLabel="BottomBar">
+                <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="U8h-3w-Upk" userLabel="BottomBar">
                     <rect key="frame" x="0.0" y="806" width="414" height="90"/>
                     <subviews>
-                        <pageControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="LKU-Zl-PPZ">
+                        <pageControl hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="LKU-Zl-PPZ">
                             <rect key="frame" x="146.5" y="14" width="121.5" height="27.5"/>
                             <color key="currentPageIndicatorTintColor" name="SelectedPage+Grafics"/>
                         </pageControl>
@@ -287,7 +287,7 @@
                 </view>
             </subviews>
             <viewLayoutGuide key="safeArea" id="Uji-kP-67o"/>
-            <color key="backgroundColor" name="Secondary"/>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
                 <constraint firstItem="U8h-3w-Upk" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="9co-Mb-Ogi"/>
                 <constraint firstItem="U8h-3w-Upk" firstAttribute="top" secondItem="fow-I5-Xzr" secondAttribute="bottom" id="Ort-hf-Auc"/>
