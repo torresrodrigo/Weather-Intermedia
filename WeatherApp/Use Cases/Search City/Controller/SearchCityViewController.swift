@@ -36,7 +36,7 @@ class SearchCityViewController: UIViewController {
     }
     
     func saveDataUserDefault() {
-        if let encodedLocation = try? JSONEncoder().encode(paginationViewController.weatherLocationsData) {
+        if let encodedLocation = try? JSONEncoder().encode(paginationViewController.currentLocationData) {
             userDefaults.set(encodedLocation, forKey: "locations")
             print("saved")
         }
@@ -106,7 +106,7 @@ extension SearchCityViewController: UITableViewDelegate, UITableViewDataSource {
         let searchRequest = MKLocalSearch.Request(completion: result)
         
             let search = MKLocalSearch(request: searchRequest)
-            search.start { response, error in
+        search.start { [self] response, error in
                 guard let coordinate = response?.mapItems[0].placemark.coordinate else {
                     return
                 }
@@ -117,12 +117,12 @@ extension SearchCityViewController: UITableViewDelegate, UITableViewDataSource {
                 
                 let lat = String(describing: coordinate.latitude)
                 let lon = String(describing: coordinate.longitude)
-                
-                let newLocationAdded = self.paginationViewController.createNewLocation(withLat: lat, withLon: lon, withName: name)
-                self.paginationViewController.weatherLocationsData.append(newLocationAdded)
-                let newViewController = self.paginationViewController.createLocationDetailViewController(forPage: self.paginationViewController.weatherLocationsData.count - 1)
+            
+                let newLocationAdded = self.paginationViewController.createFavoritesLocation(withLat: lat, withLon: lon, withName: name)
+                self.paginationViewController.favoritesLocationData.append(newLocationAdded)
+                let newViewController = self.paginationViewController.createLocationDetailViewController(forPage: (self.paginationViewController.currentLocationData.count + self.paginationViewController.favoritesLocationData.count) - 1)
                 self.dismiss(animated: true, completion: nil)
-                self.saveDataUserDefault()
+                //saveDataUserDefault()
                 self.paginationViewController.setViewControllers([newViewController], direction: .forward, animated: true, completion: nil)
         }
     }

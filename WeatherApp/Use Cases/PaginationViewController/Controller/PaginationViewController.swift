@@ -13,8 +13,9 @@ class PaginationViewController: UIPageViewController {
     let bottomBar = UIView()
     let search = UIButton()
     let pageControl = UIPageControl()
-    
-    var weatherLocationsData = [WeatherLocations]()
+
+    var currentLocationData = [CurrentLocation]()
+    var favoritesLocationData = [FavoritesLocation]()
     var locationService = LocationService()
     
     override init(transitionStyle style: UIPageViewController.TransitionStyle, navigationOrientation: UIPageViewController.NavigationOrientation, options: [UIPageViewController.OptionsKey : Any]? = nil) {
@@ -30,7 +31,10 @@ class PaginationViewController: UIPageViewController {
         super.viewDidLoad()
         setupPaginationController()
         initializeLocationServices()
-        setViewControllers([createLocationDetailViewController(forPage: weatherLocationsData.count)], direction: .forward, animated: true, completion: nil)
+        print("Pagination Appears")
+        setViewControllers([createLocationDetailViewController(forPage: (currentLocationData.count + favoritesLocationData.count))], direction: .forward, animated: true, completion: nil)
+        print("Current: \(currentLocationData.count)")
+        print("Favorites: \(favoritesLocationData.count)")
     }
     
     func createLocationDetailViewController(forPage page: Int) -> LocationDetailViewController {
@@ -39,9 +43,15 @@ class PaginationViewController: UIPageViewController {
         return detailViewController
     }
     
-    func createNewLocation(withLat locationLat: String, withLon locationLon: String, withName locationName: String) -> WeatherLocations {
+    func createCurrentLocation(withLat locationLat: String, withLon locationLon: String, withName locationName: String) -> CurrentLocation {
         let params: [String : String] = ["lat": locationLat, "lon": locationLon]
-        let newLocation = WeatherLocations(params: params, name: locationName)
+        let newLocation = CurrentLocation(params: params, name: locationName)
+        return newLocation
+    }
+    
+    func createFavoritesLocation(withLat locationLat: String, withLon locationLon: String, withName locationName: String) -> FavoritesLocation {
+        let params: [String : String] = ["lat": locationLat, "lon": locationLon]
+        let newLocation = FavoritesLocation(params: params, name: locationName)
         return newLocation
     }
     
@@ -103,7 +113,7 @@ extension PaginationViewController: UIPageViewControllerDelegate, UIPageViewCont
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
         if let currentViewController = viewController as? LocationDetailViewController {
-            if currentViewController.locationIndex < weatherLocationsData.count - 1 {
+            if currentViewController.locationIndex < (currentLocationData.count + favoritesLocationData.count) - 1 {
                 return createLocationDetailViewController(forPage: currentViewController.locationIndex + 1)
             }
         }

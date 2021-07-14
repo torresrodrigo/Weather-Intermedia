@@ -41,8 +41,8 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
     weak var axisFormatDelegate: IAxisValueFormatter?
     
     //MARK: - Properties
-    let userDefaults = UserDefaults.standard
     let paginationViewController = UIApplication.shared.windows.first?.rootViewController as! PaginationViewController
+    let userDefaults = UserDefaults.standard
     var locationIndex = 0
     var headerIsOpen = false
     
@@ -63,6 +63,7 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
         super.viewDidLoad()
         setupUI()
         getDataByLocation()
+        print("Location Appears")
     }
     
     //MARK: - HomeViewController Events
@@ -90,7 +91,6 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
 
     private func setupUI() {
         heightHeaderView.constant = 255
-        setupPageControl()
         setupScrollView()
         setupTableView()
         setupCollectionView()
@@ -139,11 +139,16 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
         }
     }
     
+    func removeDataUserDefaults() {
+        userDefaults.removeObject(forKey: "locations")
+        print("removed")
+    }
+    
     func getDataUserDefault() {
         if let decodedData = userDefaults.object(forKey: "locations") as? Data {
-            if let locations = try? JSONDecoder().decode([WeatherLocations].self, from: decodedData) {
+            if let locations = try? JSONDecoder().decode([CurrentLocation].self, from: decodedData) {
                 print("get")
-                print(locations)
+                print(locations.count)
             }
         }
     }
@@ -167,21 +172,6 @@ extension LocationDetailViewController {
         else {
             setupSwitchOff()
         }
-    }
-}
-
-    //MARK: - PageControl Extension
-
-extension LocationDetailViewController {
-    
-    func setupPageControl() {
-        self.pageControl.backgroundStyle = .minimal
-        self.pageControl.setIndicatorImage(UIImage(named: "location-arrow-solid"), forPage: 0)
-        self.pageControl.preferredIndicatorImage = UIImage(named: "step")
-        paginationViewController.view.addSubview(pageControl)
-        self.pageControl.translatesAutoresizingMaskIntoConstraints = false
-        self.pageControl.topAnchor.constraint(equalTo: paginationViewController.bottomBar.topAnchor, constant: 10).isActive = true
-        self.pageControl.centerXAnchor.constraint(equalTo: paginationViewController.bottomBar.centerXAnchor, constant: 10).isActive = true
     }
 }
 
@@ -299,14 +289,12 @@ extension LocationDetailViewController {
         let paginationViewController = UIApplication.shared.windows.first?.rootViewController as! PaginationViewController
         let latCoreLocation = String(describing: locationService.locationManager.location!.coordinate.latitude)
         let lonCoreLocation = String(describing: locationService.locationManager.location!.coordinate.longitude)
-        let currentData = paginationViewController.createNewLocation(withLat: latCoreLocation, withLon: lonCoreLocation, withName: "Current")
-        if paginationViewController.weatherLocationsData.count == 0 {
-            if paginationViewController.weatherLocationsData.count > 0 {
-                paginationViewController.weatherLocationsData[0].params = ["lat": latCoreLocation, "lon": lonCoreLocation]
-            }
-            paginationViewController.weatherLocationsData.append(currentData)
+        let currentData = paginationViewController.createCurrentLocation(withLat: latCoreLocation, withLon: lonCoreLocation, withName: "Current")
+        if paginationViewController.currentLocationData.count == 0 {
+            paginationViewController.currentLocationData.append(currentData)
         }
-        let paramsLocation: [String : String] = paginationViewController.weatherLocationsData[locationIndex].params
+        let isCurrentLocation : Bool = locationIndex == 0 ? true : false
+        let paramsLocation: [String : String] = isCurrentLocation ? paginationViewController.currentLocationData[locationIndex].params : paginationViewController.favoritesLocationData[locationIndex - 1].params
         
         //Get CurrentWeatherData
         NetworkService.shared.getCurrentWeatherData(params: paramsLocation) { response in
@@ -331,9 +319,12 @@ extension LocationDetailViewController {
                 DispatchQueue.main.async { [weak self] in
                     let pageViewController = UIApplication.shared.windows.first?.rootViewController as! PaginationViewController
                     let myPageControl = pageViewController.pageControl
-                    myPageControl.numberOfPages = (pageViewController.weatherLocationsData.count)
+                    myPageControl.numberOfPages = (pageViewController.currentLocationData.count)
                     myPageControl.currentPage = self!.locationIndex
                     pageViewController.setupPageControl()
+                    print("Location index: \(self!.locationIndex)")
+                    print("Location - Current: \(paginationViewController.currentLocationData.count)")
+                    print("Location - Favorites: \(paginationViewController.favoritesLocationData.count)")
                     self?.getDataUserDefault()
                     self?.updateForecastUI()
                     self?.hourlyForecastCollectionView.reloadData()
