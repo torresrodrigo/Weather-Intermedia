@@ -41,9 +41,10 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
     weak var axisFormatDelegate: IAxisValueFormatter?
     
     //MARK: - Properties
+    let userDefaults = UserDefaults.standard
+    let paginationViewController = UIApplication.shared.windows.first?.rootViewController as! PaginationViewController
     var locationIndex = 0
     var headerIsOpen = false
-    let pageViewController = UIApplication.shared.windows.first?.rootViewController as! PaginationViewController
     
     //MARK: - Services
     let locationService = LocationService()
@@ -57,6 +58,7 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
     var dataDaily = [DailyData]()
     var dataCurrent: CurrentWeatherBaseData?
     var dataForecast: ForecastWeatherBaseData?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -137,6 +139,14 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
         }
     }
     
+    func getDataUserDefault() {
+        if let decodedData = userDefaults.object(forKey: "locations") as? Data {
+            if let locations = try? JSONDecoder().decode([WeatherLocations].self, from: decodedData) {
+                print("get")
+                print(locations)
+            }
+        }
+    }
 }
     
     //MARK: - Switch Extension
@@ -168,6 +178,10 @@ extension LocationDetailViewController {
         self.pageControl.backgroundStyle = .minimal
         self.pageControl.setIndicatorImage(UIImage(named: "location-arrow-solid"), forPage: 0)
         self.pageControl.preferredIndicatorImage = UIImage(named: "step")
+        paginationViewController.view.addSubview(pageControl)
+        self.pageControl.translatesAutoresizingMaskIntoConstraints = false
+        self.pageControl.topAnchor.constraint(equalTo: paginationViewController.bottomBar.topAnchor, constant: 10).isActive = true
+        self.pageControl.centerXAnchor.constraint(equalTo: paginationViewController.bottomBar.centerXAnchor, constant: 10).isActive = true
     }
 }
 
@@ -287,6 +301,9 @@ extension LocationDetailViewController {
         let lonCoreLocation = String(describing: locationService.locationManager.location!.coordinate.longitude)
         let currentData = paginationViewController.createNewLocation(withLat: latCoreLocation, withLon: lonCoreLocation, withName: "Current")
         if paginationViewController.weatherLocationsData.count == 0 {
+            if paginationViewController.weatherLocationsData.count > 0 {
+                paginationViewController.weatherLocationsData[0].params = ["lat": latCoreLocation, "lon": lonCoreLocation]
+            }
             paginationViewController.weatherLocationsData.append(currentData)
         }
         let paramsLocation: [String : String] = paginationViewController.weatherLocationsData[locationIndex].params
@@ -309,14 +326,15 @@ extension LocationDetailViewController {
             switch response {
             case .success(let response):
                 self.dataForecast = response
-                print(response)
                 self.dataHourly = self.dataForecast!.hourly
                 self.dataDaily = self.dataForecast!.daily
                 DispatchQueue.main.async { [weak self] in
                     let pageViewController = UIApplication.shared.windows.first?.rootViewController as! PaginationViewController
-                    self?.pageControl.isHidden = false
-                    self?.pageControl.numberOfPages = (pageViewController.weatherLocationsData.count)
-                    self?.pageControl.currentPage = self!.locationIndex
+                    let myPageControl = pageViewController.pageControl
+                    myPageControl.numberOfPages = (pageViewController.weatherLocationsData.count)
+                    myPageControl.currentPage = self!.locationIndex
+                    pageViewController.setupPageControl()
+                    self?.getDataUserDefault()
                     self?.updateForecastUI()
                     self?.hourlyForecastCollectionView.reloadData()
                     self?.dailyForecastTableView.reloadData()

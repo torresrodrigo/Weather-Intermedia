@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct WeatherLocations {
-    let params : [String : String]
+struct WeatherLocations: Codable {
+    var params : [String : String]
     let name : String
 }

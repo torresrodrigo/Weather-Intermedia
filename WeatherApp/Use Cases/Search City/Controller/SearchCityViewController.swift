@@ -14,7 +14,9 @@ class SearchCityViewController: UIViewController {
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var resultsTableView: UITableView!
     
+    let paginationViewController = UIApplication.shared.windows.first?.rootViewController as! PaginationViewController
     var isExpand : Bool = false
+    let userDefaults = UserDefaults.standard
     var searchCompleter = MKLocalSearchCompleter()
     var searchResults = [MKLocalSearchCompletion]()
     
@@ -31,6 +33,13 @@ class SearchCityViewController: UIViewController {
         searchBar.becomeFirstResponder()
         searchBar.showsCancelButton = true
         searchBar.tintColor = .black
+    }
+    
+    func saveDataUserDefault() {
+        if let encodedLocation = try? JSONEncoder().encode(paginationViewController.weatherLocationsData) {
+            userDefaults.set(encodedLocation, forKey: "locations")
+            print("saved")
+        }
     }
 }
 
@@ -109,12 +118,12 @@ extension SearchCityViewController: UITableViewDelegate, UITableViewDataSource {
                 let lat = String(describing: coordinate.latitude)
                 let lon = String(describing: coordinate.longitude)
                 
-                let paginationViewController = UIApplication.shared.windows.first?.rootViewController as! PaginationViewController
-                let newLocationAdded = paginationViewController.createNewLocation(withLat: lat, withLon: lon, withName: name)
-                paginationViewController.weatherLocationsData.append(newLocationAdded)
-                let newViewController = paginationViewController.createLocationDetailViewController(forPage: paginationViewController.weatherLocationsData.count - 1)
+                let newLocationAdded = self.paginationViewController.createNewLocation(withLat: lat, withLon: lon, withName: name)
+                self.paginationViewController.weatherLocationsData.append(newLocationAdded)
+                let newViewController = self.paginationViewController.createLocationDetailViewController(forPage: self.paginationViewController.weatherLocationsData.count - 1)
                 self.dismiss(animated: true, completion: nil)
-                paginationViewController.setViewControllers([newViewController], direction: .forward, animated: true, completion: nil)
+                self.saveDataUserDefault()
+                self.paginationViewController.setViewControllers([newViewController], direction: .forward, animated: true, completion: nil)
         }
     }
 }

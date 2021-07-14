@@ -10,12 +10,16 @@ import CoreLocation
 
 class PaginationViewController: UIPageViewController {
     
-    let userDefault = UserDefaults.standard
+    let bottomBar = UIView()
+    let search = UIButton()
+    let pageControl = UIPageControl()
+    
     var weatherLocationsData = [WeatherLocations]()
     var locationService = LocationService()
     
     override init(transitionStyle style: UIPageViewController.TransitionStyle, navigationOrientation: UIPageViewController.NavigationOrientation, options: [UIPageViewController.OptionsKey : Any]? = nil) {
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+    
     }
 
     required init?(coder: NSCoder) {
@@ -40,12 +44,52 @@ class PaginationViewController: UIPageViewController {
         let newLocation = WeatherLocations(params: params, name: locationName)
         return newLocation
     }
+    
+    func setupPageControl() {
+        self.pageControl.backgroundStyle = .minimal
+        self.pageControl.pageIndicatorTintColor = UIColor(named: "SelectedPage+Grafics")
+        self.pageControl.setIndicatorImage(UIImage(named: "location-arrow-solid"), forPage: 0)
+        self.pageControl.preferredIndicatorImage = UIImage(named: "step")
+        view.addSubview(pageControl)
+        self.pageControl.translatesAutoresizingMaskIntoConstraints = false
+        self.pageControl.topAnchor.constraint(equalTo: bottomBar.topAnchor, constant: 10).isActive = true
+        self.pageControl.centerXAnchor.constraint(equalTo: bottomBar.centerXAnchor, constant: 10).isActive = true
+    }
+    
+    @objc func searchTapped(sender: UIButton){
+        let searchCity = SearchCityViewController(nibName: "SearchCityViewController", bundle: nil)
+        self.presentOnRoot(with: searchCity)
+    }
 }
 
 extension PaginationViewController: UIPageViewControllerDelegate, UIPageViewControllerDataSource {
     func setupPaginationController() {
         self.delegate = self
         self.dataSource = self
+        view.backgroundColor = UIColor(named: "Secondary")
+        setupUI()
+    }
+    
+    func setupUI() {
+        view.addSubview(bottomBar)
+        view.addSubview(search)
+        bottomBar.backgroundColor = UIColor(named: "Primary")
+        
+        bottomBar.translatesAutoresizingMaskIntoConstraints = false
+        search.translatesAutoresizingMaskIntoConstraints = false
+        
+        search.setImage(UIImage(named: "search-solid"), for: .normal)
+        search.addTarget(self, action: #selector(self.searchTapped), for: .touchUpInside)
+        setupLayout()
+    }
+    
+    func setupLayout() {
+        bottomBar.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        bottomBar.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        bottomBar.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        bottomBar.heightAnchor.constraint(equalToConstant: 90).isActive = true
+        search.topAnchor.constraint(equalTo: bottomBar.topAnchor, constant: 16).isActive = true
+        search.leadingAnchor.constraint(equalTo: bottomBar.leadingAnchor, constant: 16).isActive = true
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
