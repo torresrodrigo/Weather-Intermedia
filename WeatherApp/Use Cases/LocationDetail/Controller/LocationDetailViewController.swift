@@ -9,7 +9,24 @@ import UIKit
 import Charts
 import CoreLocation
 
-class LocationDetailViewController: UIViewController, ChartViewDelegate {
+protocol LocationDetailDelegate {
+    var currentLocationData: [CurrentLocation] { get }
+    var favoritesLocationData: [FavoritesLocation] { get }
+    var dataCurrent : CurrentWeatherBaseData? { get }
+    var dataForecast : ForecastWeatherBaseData? { get }
+    var dataHourly: [HourlyData]? { get }
+    var dataDaily: [DailyData]? { get }
+    var locationIndex : Int { get }
+    
+    func createLocationDetailViewController(forPage page: Int) -> LocationDetailViewController
+    func createCurrentLocation(withLat: String, withLon: String, withName locationName: String) -> CurrentLocation
+    func getLocationData()
+    func didAuthorize()
+    //func createFavoritesLocation(withLat: String, withLon: String, withName locationName: String) -> FavoritesLocation
+}
+
+class LocationDetailViewController: UIViewController, ChartViewDelegate, PaginationViewDelegate {
+    
     
     // MARK: - IBOutlets
     
@@ -41,13 +58,12 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
     weak var axisFormatDelegate: IAxisValueFormatter?
     
     //MARK: - Properties
-    let paginationViewController = UIApplication.shared.windows.first?.rootViewController as! PaginationViewController
     let userDefaults = UserDefaults.standard
-    var locationIndex = 0
     var headerIsOpen = false
     
     //MARK: - Services
     let locationService = LocationService()
+    var delegateLocation : LocationDetailDelegate?
     
     //Data for update UI
     var pages = Int()
@@ -62,31 +78,33 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        getDataByLocation()
         print("Location Appears")
+        updateWithData()
     }
     
     //MARK: - HomeViewController Events
     
-    func updateWhenGetData() {
-        updateDataCurrentUI()
-        //updateForecastUI()
+    func updateWithData() {
+        updateDataCurrentUI(with: delegateLocation?.dataCurrent)
+        updateForecastUI(with: delegateLocation?.dataForecast)
+        updateValuesChartView()
     }
     
-    func updateDataCurrentUI() {
-        currentLocation.text = dataCurrent?.currentLocation
-        temperatureLocation.text = dataCurrent?.main.temp.roundToDecimal(0).removeZerosFromEnd(isPercetange: false)
-        windStatus.text =  "\(String(describing: dataCurrent!.wind.speed.roundToDecimal(1))) m/s"
+    func updateDataCurrentUI(with data: CurrentWeatherBaseData?) {
+        self.currentLocation.text = data?.currentLocation
+        self.temperatureLocation.text = data?.main.temp.roundToDecimal(0).removeZerosFromEnd(isPercetange: false)
+        self.windStatus.text =  "\(String(describing: data!.wind.speed.roundToDecimal(1))) m/s"
+        print("UpdateDataCurrentUI")
     }
     
-    func updateForecastUI() {
-        let timezoneData = dataForecast?.timezone
+    func updateForecastUI(with data: ForecastWeatherBaseData?) {
+        let timezoneData = data?.timezone
         let timezoneFormatter = timezoneData?.newText(char: "/")
         let countryName = timezoneFormatter?.firstText()
         let provinceName = timezoneFormatter?.secondText().replacingOccurrences(of: "_", with: " ")
         countryLocation.text = countryName
         provinceLocation.text = provinceName
-        rainProbability.text = dataForecast?.hourly[0].pop.getPercentage().roundToDecimal(0).removeZerosFromEnd(isPercetange: true)
+        rainProbability.text = data?.hourly[0].pop.getPercentage().roundToDecimal(0).removeZerosFromEnd(isPercetange: true)
     }
 
     private func setupUI() {
@@ -99,9 +117,9 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
     
     func updateValuesChartView() {
         for i in 0...7 {
-            chartValueTemp.append(dataDaily[i].temp.day)
-            chartValueHumidity.append(dataDaily[i].humidity)
-            day.append(dataDaily[i].dt.convertDayForChart())
+            chartValueTemp.append((delegateLocation?.dataDaily?[i].temp.day)!)
+            chartValueHumidity.append((delegateLocation?.dataDaily?[i].humidity)!)
+            day.append((delegateLocation?.dataDaily?[i].dt.convertDayForChart())!)
         }
         setupChartView(dataPoints: day, valuesTemperature: chartValueTemp, valuesHumidity: chartValueHumidity)
     }
@@ -218,24 +236,25 @@ extension LocationDetailViewController: UICollectionViewDelegate, UICollectionVi
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return dataHourly.prefix(10).count
+        let count = delegateLocation?.dataHourly?.prefix(10).count
+        return count!
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = hourlyForecastCollectionView.dequeueReusableCell(withReuseIdentifier: HourlyForecastCollectionViewCell.identifier, for: indexPath) as! HourlyForecastCollectionViewCell
         
-        let cellData = dataHourly.prefix(10)[indexPath.item]
-        let cellDataImg = dataHourly[indexPath.item].weather[0].main
-        let cellDataDescrption = dataHourly[indexPath.item].weather[0].description
+        let cellData = delegateLocation?.dataHourly?.prefix(10)[indexPath.item]
+        let cellDataImg = delegateLocation?.dataHourly?[indexPath.item].weather[0].main
+        let cellDataDescrption = delegateLocation?.dataHourly?[indexPath.item].weather[0].description
         if indexPath.row == 0 {
-            let indexValueImg = dataHourly[0].weather[0].main
-            let indexValueDescription = dataHourly[0].weather[0].description
-            cell.setupCell(with: dataHourly[0], isFirtCell: true)
+            let indexValueImg = delegateLocation?.dataHourly?[0].weather[0].main
+            let indexValueDescription = delegateLocation?.dataHourly?[0].weather[0].description
+            cell.setupCell(with: (delegateLocation?.dataHourly?[0])!, isFirtCell: true)
             cell.setupImgCell(with: indexValueImg, dataImgDescription: indexValueDescription)
             return cell
         }
         else {
-            cell.setupCell(with: cellData, isFirtCell: false)
+            cell.setupCell(with: cellData!, isFirtCell: false)
             cell.setupImgCell(with: cellDataImg, dataImgDescription: cellDataDescrption)
             return cell
         }
@@ -255,22 +274,23 @@ extension LocationDetailViewController: UITableViewDelegate, UITableViewDataSour
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return (dataDaily.count - 1)
+        let count = (delegateLocation!.dataDaily!.count - 1)
+        return count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = dailyForecastTableView.dequeueReusableCell(withIdentifier: DailyForecastTableViewCell.identifier, for: indexPath) as! DailyForecastTableViewCell
-        let cellData = dataDaily[indexPath.row + 1]
-        let cellDataImg = dataDaily[indexPath.row + 1].weather[0].main
-        let cellDataDescription = dataDaily[indexPath.row + 1].weather[0].description
+        let cellData = delegateLocation?.dataDaily?[indexPath.row + 1]
+        let cellDataImg = delegateLocation?.dataDaily?[indexPath.row + 1].weather[0].main
+        let cellDataDescription = delegateLocation?.dataDaily?[indexPath.row + 1].weather[0].description
         if indexPath.row == 0 {
-            let indexValueImg = dataDaily[1].weather[0].main
-            let indexValueDescription = dataDaily[1].weather[0].description
-            cell.setupCell(with: dataDaily[1], isFirstCell: true)
+            let indexValueImg = delegateLocation?.dataDaily?[1].weather[0].main
+            let indexValueDescription = delegateLocation?.dataDaily?[1].weather[0].description
+            cell.setupCell(with: (delegateLocation?.dataDaily?[1])!, isFirstCell: true)
             cell.setupImgCell(with: indexValueImg, dataImgDescription: indexValueDescription)
         }
         else {
-            cell.setupCell(with: cellData, isFirstCell: false)
+            cell.setupCell(with: cellData!, isFirstCell: false)
             cell.setupImgCell(with: cellDataImg, dataImgDescription: cellDataDescription)
         }
         return cell
@@ -278,62 +298,5 @@ extension LocationDetailViewController: UITableViewDelegate, UITableViewDataSour
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 46
-    }
-}
-    //MARK: - LocationService Extension
-
-extension LocationDetailViewController {
-    
-    func getDataByLocation() {
-        locationService.locationManager(locationService.locationManager, didUpdateLocations: [locationService.locationManager.location!])
-        let paginationViewController = UIApplication.shared.windows.first?.rootViewController as! PaginationViewController
-        let latCoreLocation = String(describing: locationService.locationManager.location!.coordinate.latitude)
-        let lonCoreLocation = String(describing: locationService.locationManager.location!.coordinate.longitude)
-        let currentData = paginationViewController.createCurrentLocation(withLat: latCoreLocation, withLon: lonCoreLocation, withName: "Current")
-        if paginationViewController.currentLocationData.count == 0 {
-            paginationViewController.currentLocationData.append(currentData)
-        }
-        let isCurrentLocation : Bool = locationIndex == 0 ? true : false
-        let paramsLocation: [String : String] = isCurrentLocation ? paginationViewController.currentLocationData[locationIndex].params : paginationViewController.favoritesLocationData[locationIndex - 1].params
-        
-        //Get CurrentWeatherData
-        NetworkService.shared.getCurrentWeatherData(params: paramsLocation) { response in
-            switch response {
-            case .success(let response):
-                self.dataCurrent = response
-                DispatchQueue.main.async { [weak self] in
-                    self?.updateWhenGetData()
-                }
-            case .failure(let error):
-                print(error.localizedDescription)
-            }
-        }
-        
-        //Get ForecastWeatherData
-        NetworkService.shared.getAllWeatherData(params: paramsLocation) { response in
-            switch response {
-            case .success(let response):
-                self.dataForecast = response
-                self.dataHourly = self.dataForecast!.hourly
-                self.dataDaily = self.dataForecast!.daily
-                DispatchQueue.main.async { [weak self] in
-                    let pageViewController = UIApplication.shared.windows.first?.rootViewController as! PaginationViewController
-                    let myPageControl = pageViewController.pageControl
-                    myPageControl.numberOfPages = (pageViewController.currentLocationData.count)
-                    myPageControl.currentPage = self!.locationIndex
-                    pageViewController.setupPageControl()
-                    print("Location index: \(self!.locationIndex)")
-                    print("Location - Current: \(paginationViewController.currentLocationData.count)")
-                    print("Location - Favorites: \(paginationViewController.favoritesLocationData.count)")
-                    self?.getDataUserDefault()
-                    self?.updateForecastUI()
-                    self?.hourlyForecastCollectionView.reloadData()
-                    self?.dailyForecastTableView.reloadData()
-                    self?.updateValuesChartView()
-                }
-            case .failure(let error):
-                print(error.localizedDescription)
-            }
-        }
     }
 }

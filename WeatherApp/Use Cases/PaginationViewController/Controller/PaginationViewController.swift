@@ -8,7 +8,11 @@
 import UIKit
 import CoreLocation
 
-class PaginationViewController: UIPageViewController {
+protocol PaginationViewDelegate {
+    
+}
+
+class PaginationViewController: UIPageViewController, LocationDetailDelegate, SearchCityDelegate {
     
     let bottomBar = UIView()
     let search = UIButton()
@@ -16,11 +20,21 @@ class PaginationViewController: UIPageViewController {
 
     var currentLocationData = [CurrentLocation]()
     var favoritesLocationData = [FavoritesLocation]()
+    
+    var dataCurrent: CurrentWeatherBaseData?
+    var dataForecast: ForecastWeatherBaseData?
+    var dataHourly: [HourlyData]?
+    var dataDaily: [DailyData]?
+    var day = [String]()
+    var chartValueTemp = [Double]()
+    var chartValueHumidity = [Double]()
+    var locationIndex = 0
+    var delegateSearch : SearchCityDelegate?
+    
     var locationService = LocationService()
     
     override init(transitionStyle style: UIPageViewController.TransitionStyle, navigationOrientation: UIPageViewController.NavigationOrientation, options: [UIPageViewController.OptionsKey : Any]? = nil) {
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
-    
     }
 
     required init?(coder: NSCoder) {
@@ -29,17 +43,18 @@ class PaginationViewController: UIPageViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupPaginationController()
         initializeLocationServices()
+        setupPaginationController()
         print("Pagination Appears")
-        setViewControllers([createLocationDetailViewController(forPage: (currentLocationData.count + favoritesLocationData.count))], direction: .forward, animated: true, completion: nil)
         print("Current: \(currentLocationData.count)")
         print("Favorites: \(favoritesLocationData.count)")
+        print("Location: \(locationIndex)")
     }
     
     func createLocationDetailViewController(forPage page: Int) -> LocationDetailViewController {
         let detailViewController = LocationDetailViewController(nibName: "LocationDetail", bundle: nil)
-        detailViewController.locationIndex = page
+        locationIndex = page
+        detailViewController.delegateLocation = self
         return detailViewController
     }
     
@@ -102,20 +117,51 @@ extension PaginationViewController: UIPageViewControllerDelegate, UIPageViewCont
         search.leadingAnchor.constraint(equalTo: bottomBar.leadingAnchor, constant: 16).isActive = true
     }
     
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        if let currentViewController = viewController as? LocationDetailViewController {
-            if currentViewController.locationIndex > 0 {
-                return createLocationDetailViewController(forPage: currentViewController.locationIndex - 1)
+    func setupViewControllers(forViewController viewController: UIViewController) {
+        setViewControllers([viewController], direction: .forward, animated: true, completion: nil)
+    }
+    
+    func getLocationData() {
+        print("Current Location Count: \(currentLocationData.count)")
+        let paramsLocation: [String : String] = currentLocationData[0].params
+        print("ParamsLocation: \(paramsLocation)")
+        
+        //Get CurrentWeatherData
+        NetworkService.shared.getCurrentWeatherData(params: paramsLocation) { response in
+            switch response {
+            case .success(let response):
+                self.dataCurrent = response
+            case .failure(let error):
+                print("Error \(error.localizedDescription)")
             }
+        }
+        
+        //Get ForecastWeatherData
+        NetworkService.shared.getAllWeatherData(params: paramsLocation) { response in
+            switch response {
+            case .success(let response):
+                self.dataForecast = response
+                self.dataDaily = self.dataForecast?.daily
+                self.dataHourly = self.dataForecast?.hourly
+                DispatchQueue.main.async { [weak self] in
+                    self!.setViewControllers([self!.createLocationDetailViewController(forPage: 0)], direction: .forward, animated: true, completion: nil)
+                }
+            case .failure(let error):
+                print("Error \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
+        if locationIndex > 0 {
+            return createLocationDetailViewController(forPage: locationIndex + 1)
         }
         return nil
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        if let currentViewController = viewController as? LocationDetailViewController {
-            if currentViewController.locationIndex < (currentLocationData.count + favoritesLocationData.count) - 1 {
-                return createLocationDetailViewController(forPage: currentViewController.locationIndex + 1)
-            }
+        if locationIndex < (currentLocationData.count - 1) {
+            return createLocationDetailViewController(forPage: locationIndex + 1)
         }
         return nil
     }
@@ -133,8 +179,14 @@ extension PaginationViewController: LocationServicesDelegate  {
     
     func didAuthorize() {
         locationService.start()
+        locationService.locationManager(locationService.locationManager, didUpdateLocations: [locationService.locationManager.location!])
+        let coreLocationLat = String(describing: locationService.locationManager.location!.coordinate.latitude)
+        let coreLocationLon = String(describing: locationService.locationManager.location!.coordinate.longitude)
+        let currentData = createCurrentLocation(withLat: coreLocationLat, withLon: coreLocationLon, withName: "Current")
+        currentLocationData.append(currentData)
+        getLocationData()
     }
-    
+
     //Alert for request location permission
     func prompAuthorization() {
         let alert = UIAlertController(title: "Location access is needed to get your current location", message: "Please allow location access", preferredStyle: .alert)
@@ -151,5 +203,3 @@ extension PaginationViewController: LocationServicesDelegate  {
         present(alert, animated: true, completion: nil)
     }
 }
-
-

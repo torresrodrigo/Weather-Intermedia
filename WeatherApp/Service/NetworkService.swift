@@ -14,7 +14,7 @@ class NetworkService {
     
     func getCurrentWeatherData(params: [String : String], completed: @escaping (Result<CurrentWeatherBaseData,Error>) -> Void) {
         
-        AF.request(Endpoints().currentWeather, method: .get, parameters: params).validate(statusCode: 200..<300).responseData { response in
+        AF.request(Endpoints().currentWeather, method: .get, parameters: params).responseData { response in
             switch response.result {
             case .success(let data):
                 let decoder = JSONDecoder()
@@ -35,7 +35,7 @@ class NetworkService {
     
     func getAllWeatherData(params: [String : String], completed: @escaping (Result<ForecastWeatherBaseData,Error>) -> Void ){
         
-        AF.request(Endpoints().forecastWeather, method: .get, parameters: params).validate(statusCode: 200..<300).responseData { response in
+        AF.request(Endpoints().forecastWeather, method: .get, parameters: params).responseData { response in
             switch response.result {
             case .success(let data):
                 let decoder = JSONDecoder()
