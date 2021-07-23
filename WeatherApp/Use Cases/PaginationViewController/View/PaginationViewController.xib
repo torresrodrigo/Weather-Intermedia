@@ -14,7 +14,7 @@
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <pageViewController autoresizesArchivedViewToFullSize="NO" transitionStyle="pageCurl" navigationOrientation="horizontal" spineLocation="none" id="QZy-xF-Hnz" customClass="PaginationViewController" customModule="WeatherApp" customModuleProvider="target">
+        <pageViewController autoresizesArchivedViewToFullSize="NO" transitionStyle="scroll" navigationOrientation="horizontal" spineLocation="none" id="QZy-xF-Hnz" customClass="PaginationViewController" customModule="WeatherApp" customModuleProvider="target">
             <extendedEdge key="edgesForExtendedLayout"/>
             <connections>
                 <outlet property="view" destination="i5M-Pr-FkT" id="dfn-qB-vKc"/>

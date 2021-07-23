@@ -10,11 +10,7 @@ import Charts
 
 extension LocationDetailViewController {
     
-    func setupChartView(dataPoints: [String]?, valuesTemperature: [Double]? , valuesHumidity: [Double]? ) {
-        
-        guard let dataDay = dataPoints else { return }
-        guard let dataTemp = valuesTemperature else { return }
-        guard let dataHumidity = valuesHumidity else { return }
+    func setupChartView(dataPoints: [String], valuesTemperature: [Double] , valuesHumidity: [Double] ) {
         
         chartView.delegate = self
         chartView.legend.enabled = false
@@ -23,15 +19,15 @@ extension LocationDetailViewController {
         
         //Formatter for change values in xAxis
         let formatter = XAxisNameFormater()
-        formatter.setValues(values: dataDay)
+        formatter.setValues(values: dataPoints)
         let axis:XAxis = XAxis()
         
         // Supply data
         var dataEntriesBar: [BarChartDataEntry] = []
         var dataEntriesLine: [ChartDataEntry] = []
-        for x in 0..<dataDay.count {
-            let dataEntryBar = BarChartDataEntry(x: Double(x), y: dataTemp[x])
-            let dataEntryLine = ChartDataEntry(x: Double(x), y: dataHumidity[x])
+        for x in 0..<dataPoints.count {
+            let dataEntryBar = BarChartDataEntry(x: Double(x), y: valuesTemperature[x])
+            let dataEntryLine = ChartDataEntry(x: Double(x), y: valuesHumidity[x])
             dataEntriesBar.append(dataEntryBar)
             dataEntriesLine.append(dataEntryLine)
         }
