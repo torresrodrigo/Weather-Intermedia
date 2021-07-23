@@ -10,25 +10,22 @@ import Foundation
 struct CurrentWeatherBaseData : Codable {
     
     let weather: [Weather]?
-    let main: MainData
-    let wind: WindData
-    let currentLocation: String
+    let temp: Double
+    //let wind_speed: Int
     let dt: Double
     
     enum CodingKeys: String , CodingKey {
         case weather
-        case main
-        case wind
-        case currentLocation = "name"
+        case temp
+        //case wind_speed
         case dt
     }
     
     init(decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         weather = try values.decodeIfPresent([Weather].self, forKey: .weather)
-        main = try values.decode(MainData.self, forKey: .main)
-        wind = try values.decode(WindData.self, forKey: .wind)
-        currentLocation = try values.decode(String.self, forKey: .currentLocation)
+        temp = try values.decode(Double.self, forKey: .temp)
+        //wind_speed = try values.decode(Int.self, forKey: .wind_speed)
         dt = try values.decode(Double.self, forKey: .dt)
     }
     

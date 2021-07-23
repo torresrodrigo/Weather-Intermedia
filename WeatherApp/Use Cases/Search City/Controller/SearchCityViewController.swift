@@ -17,7 +17,7 @@ protocol SearchCityDelegate {
     func setupViewControllers(forViewController viewController: UIViewController)
 }
 
-class SearchCityViewController: UIViewController, PaginationViewDelegate {
+class SearchCityViewController: UIViewController {
 
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var resultsTableView: UITableView!

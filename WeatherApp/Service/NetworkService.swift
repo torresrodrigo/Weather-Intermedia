@@ -12,7 +12,7 @@ class NetworkService {
     
     static let shared = NetworkService()
     
-    func getCurrentWeatherData(params: [String : String], completed: @escaping (Result<CurrentWeatherBaseData,Error>) -> Void) {
+    func getCurrentWeatherData(params: [String : String], completed: @escaping (Result<CurrentWeatherBaseData,Error>) -> Void)   {
         
         AF.request(Endpoints().currentWeather, method: .get, parameters: params).responseData { response in
             switch response.result {
@@ -22,6 +22,7 @@ class NetworkService {
                 do {
                     let results = try decoder.decode(CurrentWeatherBaseData.self, from: data)
                     completed(.success(results))
+                    
                 } catch {
                     completed(.failure(error))
                 }
@@ -33,7 +34,7 @@ class NetworkService {
         }
     }
     
-    func getAllWeatherData(params: [String : String], completed: @escaping (Result<ForecastWeatherBaseData,Error>) -> Void ){
+    func getAllWeatherData(params: [String : String], completed: @escaping (Result<ForecastWeatherBaseData,Error>) -> Void) {
         
         AF.request(Endpoints().forecastWeather, method: .get, parameters: params).responseData { response in
             switch response.result {
@@ -42,6 +43,7 @@ class NetworkService {
                 decoder.keyDecodingStrategy = .convertFromSnakeCase
                 do {
                     let results = try decoder.decode(ForecastWeatherBaseData.self, from: data)
+                    print(results)
                     completed(.success(results))
                 } catch {
                     completed(.failure(error))
@@ -49,7 +51,6 @@ class NetworkService {
                
             case .failure(let error):
                 print(error)
-                print(response.response?.statusCode ?? 200)
             }
         }
     }

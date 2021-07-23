@@ -8,30 +8,30 @@
 import UIKit
 import CoreLocation
 
-protocol PaginationViewDelegate {
-    
+protocol UpdateDataDelegate: AnyObject {
+    //func updateDataCurrentUI() -> CurrentWeatherBaseData?
+    //func updateForecastUI() -> ForecastWeatherBaseData?
 }
 
-class PaginationViewController: UIPageViewController, LocationDetailDelegate, SearchCityDelegate {
+class PaginationViewController: UIPageViewController  {
     
+    //MARK: - UI PageControl
     let bottomBar = UIView()
     let search = UIButton()
     let pageControl = UIPageControl()
 
+    //MARK: - Locations Variables
     var currentLocationData = [CurrentLocation]()
     var favoritesLocationData = [FavoritesLocation]()
     
-    var dataCurrent: CurrentWeatherBaseData?
-    var dataForecast: ForecastWeatherBaseData?
-    var dataHourly: [HourlyData]?
-    var dataDaily: [DailyData]?
     var day = [String]()
     var chartValueTemp = [Double]()
     var chartValueHumidity = [Double]()
     var locationIndex = 0
-    var delegateSearch : SearchCityDelegate?
     
-    var locationService = LocationService()
+    //MARK: - Locations Services
+    let locationService = LocationService()
+    let geocoder = CLGeocoder()
     
     override init(transitionStyle style: UIPageViewController.TransitionStyle, navigationOrientation: UIPageViewController.NavigationOrientation, options: [UIPageViewController.OptionsKey : Any]? = nil) {
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
@@ -45,17 +45,27 @@ class PaginationViewController: UIPageViewController, LocationDetailDelegate, Se
         super.viewDidLoad()
         initializeLocationServices()
         setupPaginationController()
-        print("Pagination Appears")
-        print("Current: \(currentLocationData.count)")
-        print("Favorites: \(favoritesLocationData.count)")
-        print("Location: \(locationIndex)")
+        setupPageControl()
     }
     
-    func createLocationDetailViewController(forPage page: Int) -> LocationDetailViewController {
-        let detailViewController = LocationDetailViewController(nibName: "LocationDetail", bundle: nil)
+    func setDataChartView(with data: [DailyData]?) {
+        guard let values = data else { return }
+        for i in 0...7 {
+            self.chartValueTemp.append(values[i].temp.day)
+            self.chartValueHumidity.append(values[i].humidity)
+            self.day.append(values[i].dt.convertDayForChart())
+        }
+    }
+    
+    //MARK: - Locations Creations
+    
+    func createLocationDetailViewController(forPage page: Int, forNameCity city: String?, forDataForecast dataForecast: ForecastWeatherBaseData?) -> LocationDetailViewController {
+        let locationDetailViewController = LocationDetailViewController(nibName: "LocationDetail", bundle: nil)
         locationIndex = page
-        detailViewController.delegateLocation = self
-        return detailViewController
+        locationDetailViewController.delegate = self
+        locationDetailViewController.dataForecast = dataForecast
+        locationDetailViewController.nameCity = city
+        return locationDetailViewController
     }
     
     func createCurrentLocation(withLat locationLat: String, withLon locationLon: String, withName locationName: String) -> CurrentLocation {
@@ -70,12 +80,14 @@ class PaginationViewController: UIPageViewController, LocationDetailDelegate, Se
         return newLocation
     }
     
+    //MARK: - PageControl
+    
     func setupPageControl() {
+        view.addSubview(pageControl)
         self.pageControl.backgroundStyle = .minimal
         self.pageControl.pageIndicatorTintColor = UIColor(named: "SelectedPage+Grafics")
         self.pageControl.setIndicatorImage(UIImage(named: "location-arrow-solid"), forPage: 0)
         self.pageControl.preferredIndicatorImage = UIImage(named: "step")
-        view.addSubview(pageControl)
         self.pageControl.translatesAutoresizingMaskIntoConstraints = false
         self.pageControl.topAnchor.constraint(equalTo: bottomBar.topAnchor, constant: 10).isActive = true
         self.pageControl.centerXAnchor.constraint(equalTo: bottomBar.centerXAnchor, constant: 10).isActive = true
@@ -88,6 +100,7 @@ class PaginationViewController: UIPageViewController, LocationDetailDelegate, Se
 }
 
 extension PaginationViewController: UIPageViewControllerDelegate, UIPageViewControllerDataSource {
+    
     func setupPaginationController() {
         self.delegate = self
         self.dataSource = self
@@ -121,51 +134,50 @@ extension PaginationViewController: UIPageViewControllerDelegate, UIPageViewCont
         setViewControllers([viewController], direction: .forward, animated: true, completion: nil)
     }
     
+    //MARK: - API Call
+    
     func getLocationData() {
         print("Current Location Count: \(currentLocationData.count)")
         let paramsLocation: [String : String] = currentLocationData[0].params
         print("ParamsLocation: \(paramsLocation)")
-        
-        //Get CurrentWeatherData
-        NetworkService.shared.getCurrentWeatherData(params: paramsLocation) { response in
-            switch response {
-            case .success(let response):
-                self.dataCurrent = response
-            case .failure(let error):
-                print("Error \(error.localizedDescription)")
-            }
-        }
-        
+     
         //Get ForecastWeatherData
         NetworkService.shared.getAllWeatherData(params: paramsLocation) { response in
             switch response {
             case .success(let response):
-                self.dataForecast = response
-                self.dataDaily = self.dataForecast?.daily
-                self.dataHourly = self.dataForecast?.hourly
+                self.setDataChartView(with: response.daily)
                 DispatchQueue.main.async { [weak self] in
-                    self!.setViewControllers([self!.createLocationDetailViewController(forPage: 0)], direction: .forward, animated: true, completion: nil)
+                    self?.setViewControllers([self!.createLocationDetailViewController(forPage: 0, forNameCity: self?.currentLocationData[0].name, forDataForecast: response)], direction: .forward, animated: false, completion: nil)
                 }
             case .failure(let error):
                 print("Error \(error.localizedDescription)")
             }
         }
+ 
     }
+    
+    //MARK: - Methods for scroll Pagination
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         if locationIndex > 0 {
-            return createLocationDetailViewController(forPage: locationIndex + 1)
+            return createLocationDetailViewController(forPage: locationIndex - 1, forNameCity: nil, forDataForecast: nil)
         }
         return nil
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
         if locationIndex < (currentLocationData.count - 1) {
-            return createLocationDetailViewController(forPage: locationIndex + 1)
+            return createLocationDetailViewController(forPage: locationIndex + 1, forNameCity: nil, forDataForecast: nil)
         }
         return nil
     }
 }
+
+extension PaginationViewController: UpdateDataDelegate {
+    
+}
+
+    //MARK: - CoreLocation
 
 extension PaginationViewController: LocationServicesDelegate  {
     
@@ -179,12 +191,21 @@ extension PaginationViewController: LocationServicesDelegate  {
     
     func didAuthorize() {
         locationService.start()
-        locationService.locationManager(locationService.locationManager, didUpdateLocations: [locationService.locationManager.location!])
-        let coreLocationLat = String(describing: locationService.locationManager.location!.coordinate.latitude)
-        let coreLocationLon = String(describing: locationService.locationManager.location!.coordinate.longitude)
-        let currentData = createCurrentLocation(withLat: coreLocationLat, withLon: coreLocationLon, withName: "Current")
-        currentLocationData.append(currentData)
-        getLocationData()
+        guard let location = locationService.locationManager.location else { return }
+        guard let coreLocationLat = locationService.locationManager.location?.coordinate.latitude else { return }
+        guard let coreLocationLon = locationService.locationManager.location?.coordinate.longitude else { return }
+        let latitude = String(describing: coreLocationLat)
+        let longitude = String(describing: coreLocationLon)
+        locationService.locationManager(locationService.locationManager, didUpdateLocations: [location])
+        geocoder.reverseGeocodeLocation(location) { [weak self] placemarket, error in
+            if error == nil {
+                guard let firstLocation = placemarket?.first else { return }
+                guard let cityname = firstLocation.locality else { return }
+                guard let currentData = self?.createCurrentLocation(withLat: latitude, withLon: longitude, withName: cityname) else { return }
+                self?.currentLocationData.append(currentData)
+                self?.getLocationData()
+                }
+        }
     }
 
     //Alert for request location permission
