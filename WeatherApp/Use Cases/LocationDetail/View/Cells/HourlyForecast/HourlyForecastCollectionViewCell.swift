@@ -26,14 +26,14 @@ class HourlyForecastCollectionViewCell: UICollectionViewCell {
         // Initialization code
     }
 
-    func setupCell(with hourlyData: HourlyData, isFirtCell: Bool) {
-        let popIsZero: Bool = (hourlyData.pop.getPercentage() == 0) ? true : false
-        let hourTime = hourlyData.dt.convertHour()
+    func setupCell(with hourlyData: HourlyData?, isFirtCell: Bool) {
+        let popIsZero: Bool = (hourlyData?.pop.getPercentage() == 0) ? true : false
+        guard let hourTime = hourlyData?.dt.convertHour() else { return }
         let valueCondition = isFirtCell
         
-        temperatureLabel.text = hourlyData.temp.roundToDecimal(0).removeZerosFromEnd(isPercetange: false)
+        temperatureLabel.text = hourlyData?.temp.roundToDecimal(0).removeZerosFromEnd(isPercetange: false)
         probabilityRainLabel.isHidden = popIsZero ? true : false
-        probabilityRainLabel.text = hourlyData.pop.roundToDecimal(0).removeZerosFromEnd(isPercetange: true)
+        probabilityRainLabel.text = hourlyData?.pop.getPercentage().removeZerosFromEnd(isPercetange: true)
         probabilityRainLabel.textColor = UIColor(named: "RainProbabilityText-1")
         hourLabel.text = valueCondition ? "Now" : hourTime.lowercased()
     }

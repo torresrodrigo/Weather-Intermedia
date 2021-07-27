@@ -7,12 +7,13 @@
 
 import Foundation
 
-struct CurrentLocation: Codable {
-    var params: [String : String]
-    let name: String
+enum DataLocationType: String, Codable {
+    case current
+    case favourite
 }
 
-struct FavoritesLocation: Codable {
+struct DataLocations: Codable {
     var params: [String : String]
     let name: String
+    var type: DataLocationType
 }

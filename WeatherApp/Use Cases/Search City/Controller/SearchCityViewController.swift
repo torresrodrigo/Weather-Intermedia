@@ -9,24 +9,21 @@ import UIKit
 import MapKit
 
 protocol SearchCityDelegate {
-    var favoritesLocationData: [FavoritesLocation] {get set}
-    var currentLocationData: [CurrentLocation] {get set}
-    var locationIndex: Int { get }
-    func createFavoritesLocation(withLat: String, withLon: String, withName locationName: String) -> FavoritesLocation
-    func createLocationDetailViewController(forPage page: Int) -> LocationDetailViewController
-    func setupViewControllers(forViewController viewController: UIViewController)
+    func didTapPlace(coordinate:CLLocationCoordinate2D, nameCity: String)
+    func createLocationDetailViewController()
 }
 
-class SearchCityViewController: UIViewController, PaginationViewDelegate {
+class SearchCityViewController: UIViewController {
 
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var resultsTableView: UITableView!
     
-    var delegateSearch : SearchCityDelegate?
     var isExpand : Bool = false
     let userDefaults = UserDefaults.standard
     var searchCompleter = MKLocalSearchCompleter()
     var searchResults = [MKLocalSearchCompletion]()
+    var delegate: SearchCityDelegate?
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,14 +39,7 @@ class SearchCityViewController: UIViewController, PaginationViewDelegate {
         searchBar.showsCancelButton = true
         searchBar.tintColor = .black
     }
-    /*
-    func saveDataUserDefault() {
-        if let encodedLocation = try? JSONEncoder().encode(.currentLocationData) {
-            userDefaults.set(encodedLocation, forKey: "locations")
-            print("saved")
-        }
-    }
- */
+ 
 }
 
 extension SearchCityViewController: MKLocalSearchCompleterDelegate {
@@ -123,19 +113,10 @@ extension SearchCityViewController: UITableViewDelegate, UITableViewDataSource {
             guard let name = response?.mapItems[0].name else {
                 return
             }
-            
-            let lat = String(describing: coordinate.latitude)
-            let lon = String(describing: coordinate.longitude)
-            
-            let paginationViewController = PaginationViewController()
-            
-            let newLocationAdded = delegateSearch?.createFavoritesLocation(withLat: lat, withLon: lon, withName: name)
-            print("Delegate search: \(delegateSearch)")
-            delegateSearch?.favoritesLocationData.append(newLocationAdded!)
-            let newViewController = delegateSearch?.createLocationDetailViewController(forPage: (delegateSearch!.locationIndex) )
+        
+            delegate?.didTapPlace(coordinate: coordinate, nameCity: name)
+            delegate?.createLocationDetailViewController()
             self.dismiss(animated: true, completion: nil)
-            //saveDataUserDefault()
-            //delegateSearch?.setupViewControllers(forViewController: newViewController!)
         }
     }
 }

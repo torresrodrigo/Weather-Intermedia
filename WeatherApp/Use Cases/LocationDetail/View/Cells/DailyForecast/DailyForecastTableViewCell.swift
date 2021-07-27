@@ -25,7 +25,6 @@ class DailyForecastTableViewCell: UITableViewCell {
         super.awakeFromNib()
         // Initialization code)
         weatherImg.contentMode = .scaleAspectFit
-
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -33,16 +32,16 @@ class DailyForecastTableViewCell: UITableViewCell {
         selectionStyle = .none
     }
     
-    func setupCell(with dailyData: DailyData, isFirstCell: Bool) {
-        let date = dailyData.dt.convertDay()
-        let popIsZero : Bool = (dailyData.pop == 0) ? true : false
+    func setupCell(with dailyData: DailyData?, isFirstCell: Bool) {
+        let date = dailyData?.dt.convertDay()
+        let popIsZero : Bool = (dailyData?.pop == 0) ? true : false
         let valueCondition = isFirstCell
         
         dayLabel.text =  valueCondition ? "Tomorrow" : date
         probabilityRainLabel.isHidden = popIsZero ? true : false
-        probabilityRainLabel.text = dailyData.pop.getPercentage().roundToDecimal(0).removeZerosFromEnd(isPercetange: true)
+        probabilityRainLabel.text = dailyData?.pop.getPercentage().roundToDecimal(0).removeZerosFromEnd(isPercetange: true)
         probabilityRainLabel.textColor = UIColor(named: "RainProbabilityText-1")
-        temperatureLabel.text = "\(dailyData.temp.day.roundToDecimal(0).removeZerosFromEnd(isPercetange: false))"
+        temperatureLabel.text = dailyData?.temp.day.roundToDecimal(0).removeZerosFromEnd(isPercetange: false)
         
     }
     
