@@ -48,7 +48,6 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
     var dataForecast: ForecastWeatherBaseData?
     var dataHourly = [HourlyData]()
     var dataDaily = [DailyData]()
-    var locationIndex: Int?
     
     //ChartView
     var day = [String]()
@@ -66,6 +65,7 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
         super.viewDidLoad()
         setupDelegation()
         setupUI()
+        //print("Current LocationDetail index: \(locationIndex)")
     }
     
     //MARK: - HomeViewController Events

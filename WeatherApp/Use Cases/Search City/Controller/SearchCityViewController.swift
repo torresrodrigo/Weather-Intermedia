@@ -10,7 +10,6 @@ import MapKit
 
 protocol SearchCityDelegate {
     func didTapPlace(coordinate:CLLocationCoordinate2D, nameCity: String)
-    func createLocationDetailViewController()
 }
 
 class SearchCityViewController: UIViewController {
@@ -115,7 +114,6 @@ extension SearchCityViewController: UITableViewDelegate, UITableViewDataSource {
             }
         
             delegate?.didTapPlace(coordinate: coordinate, nameCity: name)
-            delegate?.createLocationDetailViewController()
             self.dismiss(animated: true, completion: nil)
         }
     }
