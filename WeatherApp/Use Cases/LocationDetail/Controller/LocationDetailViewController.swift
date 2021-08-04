@@ -46,8 +46,10 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
     //UI
     var nameCity : String?
     var dataForecast: ForecastWeatherBaseData?
+    var coordinates: [String : String]?
     var dataHourly = [HourlyData]()
     var dataDaily = [DailyData]()
+    var locationIndex = 0
     
     //ChartView
     var day = [String]()
@@ -60,12 +62,13 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
     //MARK: - Services
     let locationService = LocationService()
     var paginationViewController: PaginationViewController?
+    var delegate: UpdateDataDelegate?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupDelegation()
         setupUI()
-        //print("Current LocationDetail index: \(locationIndex)")
+        setupDelegation()
+        getLocationData()
     }
     
     //MARK: - HomeViewController Events
@@ -76,8 +79,27 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
         setupTableView()
         setupCollectionView()
         setupSwitchOff()
-        updateDataCurrentUI(with: dataForecast, forNameCity: nameCity)
-        updateValuesChartView()
+    }
+    
+    func getLocationData() {
+        guard let paramsLocation = coordinates else { return }
+        print("ParamsLocation: \(paramsLocation)")
+     
+        //Get ForecastWeatherData
+        NetworkService.shared.getAllWeatherData(params: paramsLocation) { response in
+            switch response {
+            case .success(let response):
+                self.dataForecast = response
+                DispatchQueue.main.async { [weak self] in
+                    self?.updateDataCurrentUI(with: self?.dataForecast, forNameCity: self?.nameCity)
+                    self?.updateValuesChartView()
+                    self?.dailyForecastTableView.reloadData()
+                    self?.hourlyForecastCollectionView.reloadData()
+                }
+            case .failure(let error):
+                print("Error \(error.localizedDescription)")
+            }
+        }
     }
     
     func updateDataCurrentUI(with dataForecast: ForecastWeatherBaseData?, forNameCity nameCity: String?) {
@@ -285,3 +307,4 @@ extension LocationDetailViewController: UpdateDataDelegate {
       }
 
 }
+
