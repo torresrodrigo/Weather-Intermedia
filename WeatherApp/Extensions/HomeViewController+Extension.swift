@@ -33,11 +33,11 @@ extension LocationDetailViewController {
         }
         
         let chartDataSetBar = BarChartDataSet(entries: dataEntriesBar)
-        chartDataSetBar.colors = [NSUIColor(cgColor: UIColor(named: "SelectedPage+Grafics")!.cgColor)]
+        chartDataSetBar.colors = [NSUIColor(cgColor: Colors.selectedPageAndGraphics!.cgColor)]
         chartDataSetBar.axisDependency = .right
         
         let chartDataSetLine = LineChartDataSet(entries: dataEntriesLine)
-        chartDataSetLine.colors = [NSUIColor(cgColor: UIColor(named: "ChartText+Line")!.cgColor)]
+        chartDataSetLine.colors = [NSUIColor(cgColor: Colors.chartTextAndLine!.cgColor)]
         chartDataSetLine.drawCirclesEnabled = false
         chartDataSetLine.mode = .cubicBezier
         chartDataSetLine.lineWidth = 2
@@ -68,8 +68,8 @@ extension LocationDetailViewController {
         xAxis.labelPosition = .bottom
         axis.valueFormatter = formatter
         xAxis.valueFormatter = axis.valueFormatter
-        xAxis.labelTextColor = UIColor(named: "ChartText+Line")!
-        xAxis.labelFont = UIFont(name: "SFProRounded-Bold", size: 12)!
+        xAxis.labelTextColor = Colors.chartTextAndLine!
+        xAxis.labelFont = Fonts.RoundedBold
         
         let rightAxis = chartView.rightAxis
         rightAxis.valueFormatter = RightAxisFormatter()
@@ -78,8 +78,8 @@ extension LocationDetailViewController {
         rightAxis.granularity = 15
         rightAxis.axisMinimum = 0
         rightAxis.axisMaximum = 55
-        rightAxis.labelTextColor = UIColor(named: "SelectedPage+Grafics")!
-        rightAxis.labelFont = UIFont(name: "SFProRounded-Bold", size: 12)!
+        rightAxis.labelTextColor = Colors.selectedPageAndGraphics!
+        rightAxis.labelFont = Fonts.RoundedBold
         
         let yAxis = chartView.leftAxis
         yAxis.valueFormatter = YAxisFormatter()
@@ -89,8 +89,8 @@ extension LocationDetailViewController {
         yAxis.axisMaximum = 100
         yAxis.granularity = 30
         
-        yAxis.labelTextColor = UIColor(named: "ChartText+Line")!
-        yAxis.labelFont = UIFont(name: "SFProRounded-Bold", size: 12)!
+        yAxis.labelTextColor = Colors.chartTextAndLine!
+        yAxis.labelFont = Fonts.RoundedBold
         
         chartView.data = comData
         

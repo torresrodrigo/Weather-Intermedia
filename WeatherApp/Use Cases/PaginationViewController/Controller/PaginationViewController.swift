@@ -8,7 +8,9 @@
 import UIKit
 import CoreLocation
 
+
 protocol UpdateDataDelegate: AnyObject {}
+
 
 class PaginationViewController: UIPageViewController {
     
@@ -20,8 +22,8 @@ class PaginationViewController: UIPageViewController {
     let userDefaults = UserDefaults.standard
     var locationData = [DataLocations]()
     var locationIndex = 0
-    var pages = [LocationDetailViewController]()
-    var searchCityViewController:SearchCityViewController?
+    var searchCityViewController: SearchCityViewController?
+    var locationDetailViewController: LocationDetailViewController?
     var delegateUpdate: UpdateDataDelegate?
 
     //MARK: - Locations Services
@@ -40,10 +42,11 @@ class PaginationViewController: UIPageViewController {
         super.viewDidLoad()
         initializeLocationServices()
         setupPaginationController()
+        removeDataUserDefaults()
     }
  
-    //MARK: - Setup Locations and LocationViewController
-
+    //MARK: - Setup Locations and LocationViewController}
+    
     func createLocation(withLat locationLat: String, withLon locationLon: String, withName locationName: String, type: DataLocationType = .favourite) -> DataLocations {
         let params: [String : String] = ["lat": locationLat, "lon": locationLon]
         let newLocation = DataLocations(params: params, name: locationName, type: type)
@@ -53,20 +56,14 @@ class PaginationViewController: UIPageViewController {
     
     private func setupViewControllers(forPage page: Int?) -> LocationDetailViewController? {
         let vc = LocationDetailViewController(nibName: "LocationDetail", bundle: nil)
-        pageControl.numberOfPages = locationData.count
-        
+        let isZero = page == 0 ? true : false
         guard let index = page else {return nil}
-        if page != 0 {
-            vc.coordinates = locationData[index].params
-            vc.nameCity = locationData[index].name
-            vc.locationIndex = index
-        } else {
-            vc.coordinates = locationData[0].params
-            vc.nameCity = locationData[0].name
-            vc.locationIndex = index
+        vc.delegate = self
+        vc.locationIndex = index
+        vc.coordinates = isZero ? locationData[0].params : locationData[index].params
+        vc.nameCity = isZero ? locationData[0].name : locationData[index].name
+        pageControl.numberOfPages = locationData.count
 
-        }
-    
         return vc
        }
 }
@@ -75,7 +72,7 @@ extension PaginationViewController {
     func setupPaginationController() {
         self.delegate = self
         self.dataSource = self
-        view.backgroundColor = UIColor(named: "Secondary")
+        view.backgroundColor = Colors.secondary
         setupUI()
     }
     
@@ -83,10 +80,10 @@ extension PaginationViewController {
         view.addSubview(bottomBar)
         view.addSubview(search)
         bottomBar.translatesAutoresizingMaskIntoConstraints = false
-        bottomBar.backgroundColor = UIColor(named: "Primary")
+        bottomBar.backgroundColor = Colors.primary
         
         search.translatesAutoresizingMaskIntoConstraints = false
-        search.setImage(UIImage(named: "search-solid"), for: .normal)
+        search.setImage(Icons.BottomBar.searchSolid, for: .normal)
         search.addTarget(self, action: #selector(self.searchTapped), for: .touchUpInside)
         setupLayout()
     }
@@ -103,16 +100,15 @@ extension PaginationViewController {
     func setupPageControl() {
         view.addSubview(pageControl)
         self.pageControl.backgroundStyle = .minimal
-        self.pageControl.pageIndicatorTintColor = UIColor(named: "SelectedPage+Grafics")
+        self.pageControl.pageIndicatorTintColor = Colors.selectedPageAndGraphics
         self.pageControl.currentPage = 0
         self.pageControl.numberOfPages = locationData.count
-        self.pageControl.setIndicatorImage(UIImage(named: "location-arrow-solid"), forPage: 0)
-        self.pageControl.preferredIndicatorImage = UIImage(named: "step")
+        self.pageControl.setIndicatorImage(Icons.BottomBar.locationArrowSolid, forPage: 0)
+        self.pageControl.preferredIndicatorImage = Icons.BottomBar.step
         self.pageControl.translatesAutoresizingMaskIntoConstraints = false
         self.pageControl.topAnchor.constraint(equalTo: bottomBar.topAnchor, constant: 10).isActive = true
         self.pageControl.centerXAnchor.constraint(equalTo: bottomBar.centerXAnchor, constant: 10).isActive = true
     }
-    
     
     @objc func searchTapped(sender: UIButton){
         let searchCity = SearchCityViewController(nibName: "SearchCityViewController", bundle: nil)
@@ -123,7 +119,7 @@ extension PaginationViewController {
     }
     
     func getDataUserDefault() {
-        if let decodeData = userDefaults.object(forKey: "favorites") as? Data {
+        if let decodeData = userDefaults.object(forKey: UserDefaultsData.favorites) as? Data {
             let decodedLocation = try? JSONDecoder().decode([DataLocations].self, from: decodeData)
             guard let location = decodedLocation else { return }
             locationData.append(contentsOf: location)
@@ -132,17 +128,17 @@ extension PaginationViewController {
     
     func saveDataUserDefault(data: [DataLocations]) {
         if let encodedData = try? JSONEncoder().encode(data) {
-            userDefaults.set(encodedData, forKey: "favorites")
+            userDefaults.set(encodedData, forKey: UserDefaultsData.favorites)
         }
     }
     
     func removeDataUserDefaults() {
-        userDefaults.removeObject(forKey: "favorites")
+        userDefaults.removeObject(forKey: UserDefaultsData.favorites)
     }
 
-    //MARK: - Methods for scroll Pagination
-
 }
+
+    //MARK: - Methods for scroll Pagination
 
 extension PaginationViewController: UIPageViewControllerDelegate, UIPageViewControllerDataSource {
     
@@ -158,6 +154,7 @@ extension PaginationViewController: UIPageViewControllerDelegate, UIPageViewCont
         }
     }
     
+
     public func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         guard let locationViewController = viewController as? LocationDetailViewController else { return nil}
         if locationViewController.locationIndex > 0 {
@@ -181,9 +178,27 @@ extension PaginationViewController: SearchCityDelegate {
         let favoritesLocation: [DataLocations]? = locationData.filter {$0.type == .favourite}
         saveDataUserDefault(data: favoritesLocation!)
         guard let newVc = setupViewControllers(forPage: locationData.count - 1) else { return }
-        setViewControllers([newVc], direction: .forward, animated: false, completion: nil)
+        setViewControllers([newVc], direction: .forward, animated: true, completion: nil)
         pageControl.currentPage = locationData.count - 1
     }
+}
+
+extension PaginationViewController: UpdateFavoritesDelegate {
+    
+    func didTapFavoritesSwitchOff(name: String) {
+        
+        if name != locationData[0].name {
+            let newFavorites: [DataLocations] = locationData.filter {$0.name != name}
+            locationData = newFavorites
+            saveDataUserDefault(data: newFavorites)
+            if let firstVc = setupViewControllers(forPage: 0) {
+                setViewControllers([firstVc], direction: .reverse, animated: true, completion: nil)
+            }
+            pageControl.numberOfPages = locationData.count
+            pageControl.currentPage = 0
+        }
+    }
+    
 }
 
     //MARK: - CoreLocation
@@ -220,7 +235,7 @@ extension PaginationViewController: LocationServicesDelegate  {
         }
     }
     
-    //MARK: - API Call
+    
     
     //Alert for request location permission
     func prompAuthorization() {
