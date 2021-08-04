@@ -8,7 +8,7 @@
 import Foundation
 import Charts
 
-extension HomeViewController {
+extension LocationDetailViewController {
     
     func setupChartView(dataPoints: [String], valuesTemperature: [Double] , valuesHumidity: [Double] ) {
         
@@ -95,5 +95,4 @@ extension HomeViewController {
         chartView.data = comData
         
     }
-    
 }

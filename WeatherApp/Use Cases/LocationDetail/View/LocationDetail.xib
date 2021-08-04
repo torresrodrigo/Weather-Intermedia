@@ -17,7 +17,7 @@
         </array>
     </customFonts>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="HomeViewController">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="LocationDetailViewController">
             <connections>
                 <outlet property="chartLabel" destination="Vpm-MM-KbJ" id="OmY-NU-j0C"/>
                 <outlet property="chartView" destination="M52-Cm-d5m" id="7XL-wo-YtN"/>
@@ -132,7 +132,7 @@
                                             <color key="textColor" name="PrimaryText"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="zt1-qa-T1A">
+                                        <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zt1-qa-T1A">
                                             <rect key="frame" x="349" y="510.5" width="51" height="31"/>
                                             <color key="onTintColor" name="SwitchOn"/>
                                             <connections>
@@ -256,41 +256,18 @@
                         <constraint firstAttribute="height" constant="1" id="bUG-Kg-6Pl"/>
                     </constraints>
                 </view>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="U8h-3w-Upk" userLabel="BottomBar">
-                    <rect key="frame" x="0.0" y="806" width="414" height="90"/>
-                    <subviews>
-                        <pageControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="LKU-Zl-PPZ">
-                            <rect key="frame" x="146.5" y="14" width="121.5" height="27.5"/>
-                            <color key="currentPageIndicatorTintColor" name="SelectedPage+Grafics"/>
-                        </pageControl>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Hwu-GM-ZGe">
-                            <rect key="frame" x="27" y="7" width="23" height="23"/>
-                            <constraints>
-                                <constraint firstAttribute="width" constant="23" id="D6D-o3-n27"/>
-                                <constraint firstAttribute="height" constant="23" id="u6Z-SF-a1I"/>
-                            </constraints>
-                            <state key="normal" image="search-solid"/>
-                        </button>
-                    </subviews>
-                    <color key="backgroundColor" name="Primary"/>
-                    <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                    <constraints>
-                        <constraint firstItem="Hwu-GM-ZGe" firstAttribute="top" secondItem="U8h-3w-Upk" secondAttribute="top" constant="7" id="9o1-42-RJ2"/>
-                        <constraint firstItem="LKU-Zl-PPZ" firstAttribute="top" secondItem="U8h-3w-Upk" secondAttribute="top" constant="14" id="JAt-ps-xTv"/>
-                        <constraint firstAttribute="height" constant="90" id="bl1-b7-KME"/>
-                        <constraint firstItem="Hwu-GM-ZGe" firstAttribute="leading" secondItem="U8h-3w-Upk" secondAttribute="leading" constant="27" id="eIc-kN-GGa"/>
-                        <constraint firstItem="LKU-Zl-PPZ" firstAttribute="centerX" secondItem="U8h-3w-Upk" secondAttribute="centerX" id="iwP-ES-vFN"/>
-                    </constraints>
-                </view>
+                <pageControl hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="1" translatesAutoresizingMaskIntoConstraints="NO" id="LKU-Zl-PPZ">
+                    <rect key="frame" x="165" y="814" width="84.5" height="27.5"/>
+                    <color key="currentPageIndicatorTintColor" name="SelectedPage+Grafics"/>
+                </pageControl>
             </subviews>
             <viewLayoutGuide key="safeArea" id="Uji-kP-67o"/>
-            <color key="backgroundColor" name="Secondary"/>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
-                <constraint firstItem="U8h-3w-Upk" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="9co-Mb-Ogi"/>
-                <constraint firstItem="U8h-3w-Upk" firstAttribute="top" secondItem="fow-I5-Xzr" secondAttribute="bottom" id="Ort-hf-Auc"/>
+                <constraint firstItem="LKU-Zl-PPZ" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="CRc-Nl-HDY"/>
+                <constraint firstItem="Uji-kP-67o" firstAttribute="bottom" secondItem="fow-I5-Xzr" secondAttribute="bottom" constant="56" id="G1n-LY-Krk"/>
                 <constraint firstAttribute="trailing" secondItem="v6h-H6-cIF" secondAttribute="trailing" id="VE5-Vy-JwE"/>
-                <constraint firstAttribute="bottom" secondItem="U8h-3w-Upk" secondAttribute="bottom" id="VHC-yR-IcW"/>
-                <constraint firstAttribute="trailing" secondItem="U8h-3w-Upk" secondAttribute="trailing" id="gHr-78-MLG"/>
+                <constraint firstItem="LKU-Zl-PPZ" firstAttribute="top" secondItem="fow-I5-Xzr" secondAttribute="bottom" constant="8" id="cGd-WE-2nj"/>
                 <constraint firstItem="v6h-H6-cIF" firstAttribute="top" secondItem="Uji-kP-67o" secondAttribute="top" id="iVy-s8-Q9h"/>
                 <constraint firstAttribute="trailing" secondItem="fow-I5-Xzr" secondAttribute="trailing" id="mWM-qK-XJf"/>
                 <constraint firstItem="fow-I5-Xzr" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="nWf-O0-nns"/>
@@ -302,7 +279,6 @@
     </objects>
     <resources>
         <image name="ButtonsClose" width="44" height="44"/>
-        <image name="search-solid" width="22.5" height="22.5"/>
         <image name="umbrella" width="16" height="16"/>
         <image name="weathers-clouds" width="70.5" height="51.5"/>
         <image name="wind" width="20.5" height="15"/>

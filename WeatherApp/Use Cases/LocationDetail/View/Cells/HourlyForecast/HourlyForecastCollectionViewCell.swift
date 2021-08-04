@@ -1,5 +1,5 @@
 //
-//  DailyForecastTableViewCell.swift
+//  HourlyForecastCollectionViewCell.swift
 //  WeatherApp
 //
 //  Created by Rodrigo Torres on 15/06/2021.
@@ -7,43 +7,35 @@
 
 import UIKit
 
-class DailyForecastTableViewCell: UITableViewCell {
+class HourlyForecastCollectionViewCell: UICollectionViewCell {
 
     //MARK: - IBOutlets
-    @IBOutlet weak var dayLabel: UILabel!
-    @IBOutlet weak var weatherImg: UIImageView!
+    @IBOutlet weak var hourLabel: UILabel!
     @IBOutlet weak var probabilityRainLabel: UILabel!
+    @IBOutlet weak var weatherImg: UIImageView!
     @IBOutlet weak var temperatureLabel: UILabel!
     
-    //MARK: - Static properties and Method
-    static let identifier = "DailyForecastTableViewCell"
-    static func nib() -> UINib {
-        return UINib(nibName: "DailyForecastTableViewCell", bundle: nil)
+    //MARK: - Static properties
+    static let identifier = "HourlyForecastCollectionViewCell"
+    static func nib() -> UINib{
+        return UINib(nibName: "HourlyForecastCollectionViewCell", bundle: nil)
     }
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code)
-        weatherImg.contentMode = .scaleAspectFit
-
+        // Initialization code
     }
 
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-        selectionStyle = .none
-    }
-    
-    func setupCell(with dailyData: DailyData, isFirstCell: Bool) {
-        let date = dailyData.dt.convertDay()
-        let popIsZero : Bool = (dailyData.pop == 0) ? true : false
-        let valueCondition = isFirstCell
+    func setupCell(with hourlyData: HourlyData?, isFirtCell: Bool) {
+        let popIsZero: Bool = (hourlyData?.pop.getPercentage() == 0) ? true : false
+        guard let hourTime = hourlyData?.dt.convertHour() else { return }
+        let valueCondition = isFirtCell
         
-        dayLabel.text =  valueCondition ? "Tomorrow" : date
+        temperatureLabel.text = hourlyData?.temp.roundToDecimal(0).removeZerosFromEnd(isPercetange: false)
         probabilityRainLabel.isHidden = popIsZero ? true : false
-        probabilityRainLabel.text = dailyData.pop.getPercentage().roundToDecimal(0).removeZerosFromEnd(isPercetange: true)
+        probabilityRainLabel.text = hourlyData?.pop.getPercentage().removeZerosFromEnd(isPercetange: true)
         probabilityRainLabel.textColor = UIColor(named: "RainProbabilityText-1")
-        temperatureLabel.text = "\(dailyData.temp.day.roundToDecimal(0).removeZerosFromEnd(isPercetange: false))"
-        
+        hourLabel.text = valueCondition ? "Now" : hourTime.lowercased()
     }
     
     func setupImgCell(with dataString: String?, dataImgDescription: String?) {
@@ -53,7 +45,7 @@ class DailyForecastTableViewCell: UITableViewCell {
             print("Not Image")
         }
     }
-
+    
     func getImage(dataImg: String?, dataDescription: String?) -> UIImage? {
         switch dataImg {
         case "Clouds":
@@ -76,4 +68,3 @@ class DailyForecastTableViewCell: UITableViewCell {
         }
     }
 }
-

@@ -12,37 +12,15 @@ class NetworkService {
     
     static let shared = NetworkService()
     
-    func getCurrentWeatherData(params: [String : String], completed: @escaping (Result<CurrentWeatherBaseData,Error>) -> Void) {
-        
-        AF.request(Endpoints().currentWeather, method: .get, parameters: params).validate(statusCode: 200..<300).responseData { response in
-            switch response.result {
-            case .success(let data):
-                let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
-                do {
-                    let results = try decoder.decode(CurrentWeatherBaseData.self, from: data)
-                    completed(.success(results))
-                } catch {
-                    completed(.failure(error))
-                }
-                
-            case .failure(let error):
-                print(error)
-                print(response.response?.statusCode ?? 200)
-            }
-        }
-    }
-    
     func getAllWeatherData(params: [String : String], completed: @escaping (Result<ForecastWeatherBaseData,Error>) -> Void ){
         
-        AF.request(Endpoints().forecastWeather, method: .get, parameters: params).validate(statusCode: 200..<300).responseData { response in
+        AF.request(Endpoints().forecastWeather, method: .get, parameters: params).responseData { response in
             switch response.result {
             case .success(let data):
                 let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
+                decoder.keyDecodingStrategy = .useDefaultKeys
                 do {
                     let results = try decoder.decode(ForecastWeatherBaseData.self, from: data)
-                    print()
                     completed(.success(results))
                 } catch {
                     completed(.failure(error))
