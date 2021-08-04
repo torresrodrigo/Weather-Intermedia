@@ -38,7 +38,6 @@ class PaginationViewController: UIPageViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        removeDataUserDefaults()
         initializeLocationServices()
         setupPaginationController()
     }
@@ -51,29 +50,24 @@ class PaginationViewController: UIPageViewController {
         return newLocation
     }
     
-    private func setupSetViewController() {
-        setViewControllers(pages, direction: .forward, animated: false, completion: nil)
-    }
     
-    private func setupViewControllers(isCurrentLocation: Bool) {
+    private func setupViewControllers(forPage page: Int?) -> LocationDetailViewController? {
         let vc = LocationDetailViewController(nibName: "LocationDetail", bundle: nil)
-        let current = locationData[0]
+        pageControl.numberOfPages = locationData.count
         
-        if isCurrentLocation {
-            vc.coordinates = current.params
-            vc.nameCity = current.name
-            print("Location index: \(locationIndex)")
-            pages.append(vc)
+        guard let index = page else {return nil}
+        if page != 0 {
+            vc.coordinates = locationData[index].params
+            vc.nameCity = locationData[index].name
+            vc.locationIndex = index
         } else {
-            locationIndex += 1
-            vc.coordinates = locationData[locationIndex].params
-            vc.nameCity = locationData[locationIndex].name
-            print("Location index: \(locationIndex)")
-            pages.append(vc)
+            vc.coordinates = locationData[0].params
+            vc.nameCity = locationData[0].name
+            vc.locationIndex = index
+
         }
-        
-        pageControl.numberOfPages = pages.count
-        setViewControllers([vc], direction: .forward, animated: false, completion: nil)
+    
+        return vc
        }
 }
 
@@ -110,7 +104,8 @@ extension PaginationViewController {
         view.addSubview(pageControl)
         self.pageControl.backgroundStyle = .minimal
         self.pageControl.pageIndicatorTintColor = UIColor(named: "SelectedPage+Grafics")
-        //self.pageControl.currentPage = 0
+        self.pageControl.currentPage = 0
+        self.pageControl.numberOfPages = locationData.count
         self.pageControl.setIndicatorImage(UIImage(named: "location-arrow-solid"), forPage: 0)
         self.pageControl.preferredIndicatorImage = UIImage(named: "step")
         self.pageControl.translatesAutoresizingMaskIntoConstraints = false
@@ -151,14 +146,30 @@ extension PaginationViewController {
 
 extension PaginationViewController: UIPageViewControllerDelegate, UIPageViewControllerDataSource {
     
-    public func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        return self.pages[0]
+
+    public func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
+        guard let locationViewController = viewController as? LocationDetailViewController else { return nil}
+        if locationViewController.locationIndex < locationData.count - 1 {
+            pageControl.currentPage = locationViewController.locationIndex
+            return setupViewControllers(forPage: locationViewController.locationIndex + 1)
+        } else {
+            pageControl.currentPage = locationData.count - 1
+            return nil
+        }
     }
     
-    public func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        return self.pages[1]
+    public func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
+        guard let locationViewController = viewController as? LocationDetailViewController else { return nil}
+        if locationViewController.locationIndex > 0 {
+            pageControl.currentPage = locationViewController.locationIndex
+            return setupViewControllers(forPage: locationViewController.locationIndex - 1)
+        } else {
+            pageControl.currentPage = 0
+            return nil
+        }
+
     }
-        
+            
 }
 
 extension PaginationViewController: SearchCityDelegate {
@@ -169,8 +180,9 @@ extension PaginationViewController: SearchCityDelegate {
         locationData.append(createLocation(withLat: latitude, withLon: longitude, withName: nameCity, type: .favourite))
         let favoritesLocation: [DataLocations]? = locationData.filter {$0.type == .favourite}
         saveDataUserDefault(data: favoritesLocation!)
-        setupViewControllers(isCurrentLocation: false)
-        //pageControl.currentPage = locationIndex + 1
+        guard let newVc = setupViewControllers(forPage: locationData.count - 1) else { return }
+        setViewControllers([newVc], direction: .forward, animated: false, completion: nil)
+        pageControl.currentPage = locationData.count - 1
     }
 }
 
@@ -201,8 +213,8 @@ extension PaginationViewController: LocationServicesDelegate  {
                 guard let currentData = self?.createLocation(withLat: latitude, withLon: longitude, withName: cityname, type: .current) else { return }
                 self?.locationData.append(currentData)
                 self?.getDataUserDefault()
-                self?.setupViewControllers(isCurrentLocation: true)
-                self?.setupSetViewController()
+                guard let viewControllers = self?.setupViewControllers(forPage: 0) else { return }
+                self?.setViewControllers([viewControllers], direction: .forward, animated: false, completion: nil)
                 self?.setupPageControl()
             }
         }

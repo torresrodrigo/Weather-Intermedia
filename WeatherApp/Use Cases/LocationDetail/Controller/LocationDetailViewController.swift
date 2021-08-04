@@ -49,6 +49,7 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
     var coordinates: [String : String]?
     var dataHourly = [HourlyData]()
     var dataDaily = [DailyData]()
+    var locationIndex = 0
     
     //ChartView
     var day = [String]()
@@ -89,7 +90,6 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
             switch response {
             case .success(let response):
                 self.dataForecast = response
-                print("Get location Data: \(response.current)")
                 DispatchQueue.main.async { [weak self] in
                     self?.updateDataCurrentUI(with: self?.dataForecast, forNameCity: self?.nameCity)
                     self?.updateValuesChartView()
