@@ -6,6 +6,8 @@
 //
 
 import CoreLocation
+import UIKit
+
 
 protocol LocationServicesDelegate: AnyObject {
     func promptAuthorizationAction()
@@ -15,7 +17,7 @@ protocol LocationServicesDelegate: AnyObject {
 class LocationService: NSObject {
     weak var delegate: LocationServicesDelegate?
     
-    private var locationManager: CLLocationManager!
+    var locationManager: CLLocationManager!
     
     var enabled: Bool {
         return CLLocationManager.locationServicesEnabled()
@@ -66,8 +68,11 @@ extension LocationService: CLLocationManagerDelegate {
         }
     }
     
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        print(locations)
+        func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation])   {
+        let location = locations[locations.count - 1]
+        if location.horizontalAccuracy > 0 {
+            self.locationManager.stopUpdatingLocation()
+        }
     }
-    
+ 
 }

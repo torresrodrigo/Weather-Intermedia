@@ -15,7 +15,6 @@ class DailyForecastTableViewCell: UITableViewCell {
     @IBOutlet weak var probabilityRainLabel: UILabel!
     @IBOutlet weak var temperatureLabel: UILabel!
     
-    
     //MARK: - Static properties and Method
     static let identifier = "DailyForecastTableViewCell"
     static func nib() -> UINib {
@@ -34,10 +33,47 @@ class DailyForecastTableViewCell: UITableViewCell {
         selectionStyle = .none
     }
     
-    func setupCell(with data: TestDailyForecast) {
-        dayLabel.text = data.day
-        weatherImg.image = UIImage(named: data.weather)
-        probabilityRainLabel.text = data.probabilityRain
-        temperatureLabel.text = data.temperature
+    func setupCell(with dailyData: DailyData, isFirstCell: Bool) {
+        let date = dailyData.dt.convertDay()
+        let popIsZero : Bool = (dailyData.pop == 0) ? true : false
+        let valueCondition = isFirstCell
+        
+        dayLabel.text =  valueCondition ? "Tomorrow" : date
+        probabilityRainLabel.isHidden = popIsZero ? true : false
+        probabilityRainLabel.text = dailyData.pop.getPercentage().roundToDecimal(0).removeZerosFromEnd(isPercetange: true)
+        probabilityRainLabel.textColor = UIColor(named: "RainProbabilityText-1")
+        temperatureLabel.text = "\(dailyData.temp.day.roundToDecimal(0).removeZerosFromEnd(isPercetange: false))"
+        
+    }
+    
+    func setupImgCell(with dataString: String?, dataImgDescription: String?) {
+        if let stringData = getImage(dataImg: dataString, dataDescription: dataImgDescription) {
+            weatherImg.image = stringData
+        } else {
+            print("Not Image")
+        }
+    }
+
+    func getImage(dataImg: String?, dataDescription: String?) -> UIImage? {
+        switch dataImg {
+        case "Clouds":
+            switch dataDescription {
+            case "few clouds":
+                return UIImage(named: "weathers-clouds")
+            case "scattered clouds", "broken clouds", "overcast clouds":
+                return UIImage(named: "weather-cloud")
+            default:
+                return nil
+            }
+        case "Thunderstorm":
+            return UIImage(named: "weather-thunder")
+        case "Drizzle", "Rain":
+            return UIImage(named: "weather-rains")
+        case "Clear":
+            return UIImage(named: "weather-sun")
+        default:
+            return nil
+        }
     }
 }
+

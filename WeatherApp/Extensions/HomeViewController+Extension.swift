@@ -23,8 +23,8 @@ extension HomeViewController {
         let axis:XAxis = XAxis()
         
         // Supply data
-        var dataEntriesBar : [BarChartDataEntry] = []
-        var dataEntriesLine : [ChartDataEntry] = []
+        var dataEntriesBar: [BarChartDataEntry] = []
+        var dataEntriesLine: [ChartDataEntry] = []
         for x in 0..<dataPoints.count {
             let dataEntryBar = BarChartDataEntry(x: Double(x), y: valuesTemperature[x])
             let dataEntryLine = ChartDataEntry(x: Double(x), y: valuesHumidity[x])
@@ -44,6 +44,7 @@ extension HomeViewController {
         chartDataSetLine.lineDashPhase = 0
         chartDataSetLine.drawValuesEnabled = true
         chartDataSetLine.lineDashLengths = [2,5]
+        chartDataSetLine.axisDependency = .left
         
         let barChartData = BarChartData(dataSets: [chartDataSetBar])
         barChartData.barWidth = 0.6
@@ -75,7 +76,8 @@ extension HomeViewController {
         rightAxis.drawGridLinesEnabled = false
         rightAxis.axisLineWidth = 0
         rightAxis.granularity = 15
-        rightAxis.axisMaximum = 50
+        rightAxis.axisMinimum = 0
+        rightAxis.axisMaximum = 55
         rightAxis.labelTextColor = UIColor(named: "SelectedPage+Grafics")!
         rightAxis.labelFont = UIFont(name: "SFProRounded-Bold", size: 12)!
         
@@ -83,8 +85,9 @@ extension HomeViewController {
         yAxis.valueFormatter = YAxisFormatter()
         yAxis.drawGridLinesEnabled = false
         yAxis.axisLineWidth = 0
-        yAxis.granularity = 25
-        
+        yAxis.axisMinimum = 0
+        yAxis.axisMaximum = 100
+        yAxis.granularity = 30
         
         yAxis.labelTextColor = UIColor(named: "ChartText+Line")!
         yAxis.labelFont = UIFont(name: "SFProRounded-Bold", size: 12)!

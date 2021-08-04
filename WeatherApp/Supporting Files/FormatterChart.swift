@@ -1,5 +1,5 @@
 //
-//  Formatter.swift
+//  FormatterChart.swift
 //  WeatherApp
 //
 //  Created by Rodrigo Torres on 22/06/2021.
@@ -18,7 +18,6 @@ final class XAxisNameFormater: NSObject, IAxisValueFormatter {
         if index < names.count && index >= 0 {
             return names[index]
         }
-        
         return ""
     }
     
