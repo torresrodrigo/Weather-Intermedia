@@ -6,12 +6,14 @@
 //
 
 import UIKit
+import Charts
 
-class HomeViewController: UIViewController {
+class HomeViewController: UIViewController, ChartViewDelegate {
     
     // MARK: - IBOutlets
     
     //HeaderView
+    @IBOutlet weak var headerView: UIView!
     @IBOutlet weak var currentLocation: UILabel!
     @IBOutlet weak var provinceLocation: UILabel!
     @IBOutlet weak var countryLocation: UILabel!
@@ -19,6 +21,13 @@ class HomeViewController: UIViewController {
     @IBOutlet weak var temperatureLocation: UILabel!
     @IBOutlet weak var rainProbability: UILabel!
     @IBOutlet weak var windStatus: UILabel!
+    @IBOutlet weak var chartLabel: UILabel!
+    @IBOutlet weak var detailButton: UIButton!
+    @IBOutlet weak var chartView: CombinedChartView!
+    @IBOutlet weak var favoriteCitySwitch: UISwitch!
+    @IBOutlet weak var favoriteCityLabel: UILabel!
+    //Constraints
+    @IBOutlet weak var heightHeaderView: NSLayoutConstraint!
     
     //StackView
     @IBOutlet weak var hourlyForecastCollectionView: UICollectionView!
@@ -26,12 +35,21 @@ class HomeViewController: UIViewController {
     @IBOutlet weak var homeScrollView: UIScrollView!
     
     //BotomBar
-    @IBOutlet weak var detailButton: UIButton!
     @IBOutlet weak var pageControl: UIPageControl!
     
-    //MARK: - Services
+    weak var axisFormatDelegate: IAxisValueFormatter?
     
+    //MARK: - Properties
+    var headerIsOpen = false
+    
+    //MARK: - Services
     let locationService = LocationService()
+    
+    //Test data for chartView
+    let months = ["Jan", "Feb", "Mar","Apr", "May", "Jun", "Aug"]
+    let temperatureDataValues : [Double] = [50.0 , 23.0, 32.0 , 10.0 ,40.0 , 23.0 ,17.0]
+    let humidityDataValues : [Double] = [80.0 , 60.0, 10.0 , 50.0 ,40.0 , 25.0 ,60.0]
+    
     //Test other values from TableView
     var dataServiceDaily = [TestDailyForecast]()
     var dataServiceHourly = [TestHourlyForecast]()
@@ -42,6 +60,7 @@ class HomeViewController: UIViewController {
         setupUI()
         self.dataServiceDaily = createTestDailyForecast()
         self.dataServiceHourly = createTestHourlyForecast()
+        heightHeaderView.constant = 255
     }
     
     //MARK: - HomeViewController Events
@@ -55,8 +74,59 @@ class HomeViewController: UIViewController {
         setupScrollView()
         setupTableView()
         setupCollectionView()
+        setupSwitchOff()
+        setupChartView(dataPoints: months, valuesTemperature: temperatureDataValues, valuesHumidity: humidityDataValues)
     }
     
+    @IBAction func detailButtonPressed(_ sender: Any) {
+        headerIsOpen = !headerIsOpen
+        
+        heightHeaderView.constant = headerIsOpen ? 550 : 255
+        favoriteCitySwitch.isHidden = headerIsOpen ? false : true
+        favoriteCitySwitch.isHidden = headerIsOpen ? false : true
+        self.changeButtonIcon()
+        self.chartView.animate(yAxisDuration: 1.5, easingOption: .linear)
+        
+        UIView.animate(
+            withDuration: 0.5,
+            delay: 0.0,
+            options: .curveLinear,
+            animations: {
+                self.view.layoutIfNeeded()
+            },
+            completion: { _ in
+                self.chartView.isHidden = self.headerIsOpen ? false : true
+            })
+    }
+    
+    private func changeButtonIcon() {
+        if !headerIsOpen {
+            self.detailButton.setImage(UIImage(named: "ButtonsClose"), for: .normal)
+        } else {
+            self.detailButton.setImage(UIImage(named: "ButtonsOpen"), for: .normal)
+        }
+    }
+    
+}
+    
+    //MARK: - Switch Extension
+
+extension HomeViewController {
+    private func setupSwitchOff() {
+        if favoriteCitySwitch.isOn == false {
+            favoriteCitySwitch.tintColor = UIColor(named: "SwitchOff")
+            favoriteCitySwitch.backgroundColor = UIColor(named: "SwitchOff")
+            favoriteCitySwitch.layer.cornerRadius = 16
+        }
+    }
+    
+    @IBAction func favoriteCityPressed(_ sender: Any) {
+        if favoriteCitySwitch.isOn {
+            favoriteCitySwitch.onTintColor = UIColor(named: "SwitchOn")
+        } else  {
+            setupSwitchOff()
+        }
+    }
 }
 
     //MARK: - PageControl Extension
