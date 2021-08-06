@@ -60,3 +60,7 @@ struct Fonts {
 struct UserDefaultsData {
     static let favorites = "favorites"
 }
+
+struct KeysNotification {
+    static let notificationLocation = Notification.Name(rawValue: "intermedia.rt.weatherapp.notificationLocation")
+}
