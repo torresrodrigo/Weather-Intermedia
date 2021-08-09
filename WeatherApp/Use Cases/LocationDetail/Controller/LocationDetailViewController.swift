@@ -307,4 +307,3 @@ extension LocationDetailViewController: UpdateDataDelegate  {
       }
     
 }
-

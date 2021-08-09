@@ -63,10 +63,6 @@ class PaginationViewController: UIPageViewController {
         guard let lat = data["lat"] else { return }
         guard let lon = data["lon"] else { return }
         
-        print("City name: \(cityName)")
-        print("Lat: \(lat)")
-        print("Lon: \(lon)")
-        
         let newLocationFromNotification = createLocation(withLat: lat, withLon: lon, withName: cityName, type: .favourite)
         locationData.append(newLocationFromNotification)
         guard let newVcFromNotification = setupViewControllers(forPage: locationData.count - 1) else { return }
