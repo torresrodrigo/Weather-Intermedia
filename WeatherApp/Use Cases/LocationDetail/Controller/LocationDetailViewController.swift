@@ -63,7 +63,6 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
     var headerIsOpen = false
     
     //MARK: - Services
-    let locationService = LocationService()
     var paginationViewController: PaginationViewController?
 
     override func viewDidLoad() {

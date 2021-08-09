@@ -11,7 +11,6 @@ import CoreLocation
 
 protocol UpdateDataDelegate: AnyObject {}
 
-
 class PaginationViewController: UIPageViewController {
     
     let bottomBar = UIView()
@@ -38,14 +37,41 @@ class PaginationViewController: UIPageViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         initializeLocationServices()
         setupPaginationController()
         removeDataUserDefaults()
+        createObserver()
     }
  
-    //MARK: - Setup Locations and LocationViewController}
+    //MARK: - Setup Locations and LocationViewController
+    
+    func createObserver() {
+        //Create Location from Notification
+        NotificationCenter.default.addObserver(self, selector: #selector(PaginationViewController.createNewLocationFromNotification(notification:)), name: KeysNotification.notificationLocation, object: nil)
+    }
+    
+    @objc func createNewLocationFromNotification(notification: NSNotification) {
+        guard let data = notification.userInfo as? [AnyHashable?: String] else { return }
+        guard let cityName = data["cityName"] else { return }
+        guard let lat = data["lat"] else { return }
+        guard let lon = data["lon"] else { return }
+        
+        print("City name: \(cityName)")
+        print("Lat: \(lat)")
+        print("Lon: \(lon)")
+        
+        let newLocationFromNotification = createLocation(withLat: lat, withLon: lon, withName: cityName, type: .favourite)
+        locationData.append(newLocationFromNotification)
+        guard let newVcFromNotification = setupViewControllers(forPage: locationData.count - 1) else { return }
+        setViewControllers([newVcFromNotification], direction: .forward, animated: true, completion: nil)
+
+    }
     
     func createLocation(withLat locationLat: String, withLon locationLon: String, withName locationName: String, type: DataLocationType = .favourite) -> DataLocations {
         let params: [String : String] = ["lat": locationLat, "lon": locationLon]
@@ -85,6 +111,7 @@ extension PaginationViewController {
         search.translatesAutoresizingMaskIntoConstraints = false
         search.setImage(Icons.BottomBar.searchSolid, for: .normal)
         search.addTarget(self, action: #selector(self.searchTapped), for: .touchUpInside)
+        
         setupLayout()
     }
     
@@ -142,7 +169,6 @@ extension PaginationViewController {
 
 extension PaginationViewController: UIPageViewControllerDelegate, UIPageViewControllerDataSource {
     
-
     public func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
         guard let locationViewController = viewController as? LocationDetailViewController else { return nil}
         if locationViewController.locationIndex < locationData.count - 1 {
@@ -154,11 +180,10 @@ extension PaginationViewController: UIPageViewControllerDelegate, UIPageViewCont
         }
     }
     
-
     public func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         guard let locationViewController = viewController as? LocationDetailViewController else { return nil}
         if locationViewController.locationIndex > 0 {
-            pageControl.currentPage = locationViewController.locationIndex
+            pageControl.currentPage = locationViewController.locationIndex 
             return setupViewControllers(forPage: locationViewController.locationIndex - 1)
         } else {
             pageControl.currentPage = 0
@@ -235,10 +260,9 @@ extension PaginationViewController: LocationServicesDelegate  {
         }
     }
     
-    
-    
     //Alert for request location permission
     func prompAuthorization() {
+        
         let alert = UIAlertController(title: "Location access is needed to get your current location", message: "Please allow location access", preferredStyle: .alert)
         let settingsAction = UIAlertAction(title: "Settings", style: .default) { _ in
             UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:], completionHandler: nil)
@@ -251,5 +275,6 @@ extension PaginationViewController: LocationServicesDelegate  {
         alert.addAction(cancelAction)
         alert.preferredAction = settingsAction
         present(alert, animated: true, completion: nil)
+        
     }
 }

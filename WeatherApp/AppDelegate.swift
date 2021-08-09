@@ -6,12 +6,24 @@
 //
 
 import UIKit
+import Firebase
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        FirebaseApp.configure()
         Thread.sleep(forTimeInterval: 3)
+        
+        UNUserNotificationCenter.current().delegate = self
+
+        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+        UNUserNotificationCenter.current().requestAuthorization(
+        options: authOptions,
+        completionHandler: { _, _ in })
+        
+
+        application.registerForRemoteNotifications()
         return true
     }
 
@@ -32,3 +44,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
+extension AppDelegate: UNUserNotificationCenterDelegate {
+        
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        
+        let data = response.notification.request.content.userInfo
+        guard let cityName = data["cityName"] else { return }
+        guard let lat = data["lat"] else { return }
+        guard let lon = data["lon"] else { return }
+        NotificationCenter.default.post(name: KeysNotification.notificationLocation, object: nil, userInfo: ["cityName" : cityName, "lat": lat , "lon" : lon])
+        completionHandler()
+        
+    }
+
+}
