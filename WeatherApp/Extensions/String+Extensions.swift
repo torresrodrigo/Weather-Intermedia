@@ -9,28 +9,35 @@ import Foundation
 
 extension String {
     //Search the index of a char
-    func firstIndexOf( char: Character) -> Int? {
-        return ((firstIndex(of: char)?.utf16Offset(in: self))! + 1)
+    func firstIndexOf(char: Character) -> Int? {
+        guard let firstIndex = firstIndex(of: char) else { return nil}
+        let index = firstIndex.utf16Offset(in: self)
+        return index
     }
     
     //Create a new string droping a indeces
-    func newText(char: Character) -> String {
-        let index = ((firstIndex(of: char)?.utf16Offset(in: self))! + 1)
+    func newText() -> String? {
+        guard let checkChar = firstIndex(of: "/") else {return ""}
+        let index = (checkChar.utf16Offset(in: self) + 1)
         let newText = self.dropFirst(index)
         return String(newText)
     }
     
     //Get a first text of string
-    func firstText() -> String {
-        let index = ((firstIndex(of: "/")?.utf16Offset(in: self))! + 1)
-        let text = self.prefix(index).dropLast()
-        return String(text)
+    func firstText() -> String? {
+        guard let checkChar = firstIndex(of: "/") else {return self}
+        let index = (checkChar.utf16Offset(in: self) + 1)
+        print("Index checkchar: \(index)")
+        let newText = self.prefix(index).dropLast()
+        return String(newText)
     }
     
     //Get a second text of string
-    func secondText() -> String {
-        let index = ((firstIndex(of: "/")?.utf16Offset(in: self))! + 1)
-        let text = self.dropFirst(index)
-        return String(text)
+    func secondText() -> String? {
+        guard let checkChar = firstIndex(of: "/") else {return ""}
+        let index = (checkChar.utf16Offset(in: self) + 1)
+        let newText = self.dropFirst(index)
+        return String(newText)
     }
+    
 }

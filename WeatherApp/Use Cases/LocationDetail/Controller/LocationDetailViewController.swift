@@ -41,7 +41,6 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
     
     //BotomBar
     @IBOutlet weak var pageControl: UIPageControl!
-    
     weak var axisFormatDelegate: IAxisValueFormatter?
     
     //MARK: - Properties
@@ -51,8 +50,6 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
     var nameCity : String?
     var dataForecast: ForecastWeatherBaseData?
     var coordinates: [String : String]?
-    var dataHourly = [HourlyData]()
-    var dataDaily = [DailyData]()
     var locationIndex = 0
     
     //ChartView
@@ -70,8 +67,6 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
         setupUI()
         setupDelegation()
         getLocationData()
-        print("Nombre ciudad actual: \(String(describing: nameCity))")
-
     }
     
     //MARK: - HomeViewController Events
@@ -112,11 +107,14 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
         guard let city = nameCity else { return }
         
         let timezoneData = data.timezone
-        let timezoneFormatter = timezoneData.newText(char: "/")
-        let countryName = timezoneFormatter.firstText()
-        let provinceName = timezoneFormatter.secondText().replacingOccurrences(of: "_", with: " ")
-        countryLocation.text = countryName
-        provinceLocation.text = provinceName
+        guard let firstText = timezoneData.firstText() else { return } // Continent
+        guard let secondText = timezoneData.newText()?.firstText() else { return } // Country or City
+        guard let thirdText = timezoneData.newText()?.secondText() else { return } // City
+        
+        let hasThirdText: Bool = thirdText == "" ? false : true
+        
+        countryLocation.text = hasThirdText == true ? secondText : firstText
+        provinceLocation.text = hasThirdText == true ? thirdText.replacingOccurrences(of: "_", with: " ") : secondText
         rainProbability.text = data.hourly[0].pop.getPercentage().roundToDecimal(0).removeZerosFromEnd(isPercetange: true)
         
         currentLocation.text = city
@@ -176,7 +174,7 @@ extension LocationDetailViewController {
             favoriteCitySwitch.isHidden = true
             favoriteCityLabel.isHidden = true
         } else if favoriteCitySwitch.isOn {
-            favoriteCitySwitch.onTintColor = UIColor(named: "SwitchOn")
+            favoriteCitySwitch.onTintColor = Colors.Switch.switchOn
         } else if favoriteCitySwitch.isOn == false {
             guard let city = nameCity else { return }
             delegate?.didTapFavoritesSwitchOff(name: city)
@@ -198,7 +196,7 @@ extension LocationDetailViewController: UIScrollViewDelegate {
         homeScrollView.isDirectionalLockEnabled = false
     }
         
-    //Method for change background color in ScrollView
+    //Method for change background color in ScrollView (Bounce)
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let topInsetForBouncing = scrollView.safeAreaInsets.top != 0.0 ? -scrollView.safeAreaInsets.top : 0.0
         let isBouncingTop: Bool = scrollView.contentOffset.y < topInsetForBouncing - scrollView.contentInset.top
