@@ -34,7 +34,7 @@ class HourlyForecastCollectionViewCell: UICollectionViewCell {
         temperatureLabel.text = hourlyData?.temp.roundToDecimal(0).removeZerosFromEnd(isPercetange: false)
         probabilityRainLabel.isHidden = popIsZero ? true : false
         probabilityRainLabel.text = hourlyData?.pop.getPercentage().removeZerosFromEnd(isPercetange: true)
-        probabilityRainLabel.textColor = UIColor(named: "RainProbabilityText-1")
+        probabilityRainLabel.textColor = Colors.Text.rainProbabilityText
         hourLabel.text = valueCondition ? "Now" : hourTime.lowercased()
     }
     
@@ -51,18 +51,18 @@ class HourlyForecastCollectionViewCell: UICollectionViewCell {
         case "Clouds":
             switch dataDescription {
             case "few clouds":
-                return UIImage(named: "weathers-clouds")
+                return Icons.Weathers.clouds
             case "scattered clouds", "broken clouds", "overcast clouds":
-                return UIImage(named: "weather-cloud")
+                return Icons.Weathers.cloud
             default:
                 return nil
             }
         case "Thunderstorm":
-            return UIImage(named: "weather-thunder")
+            return Icons.Weathers.thunder
         case "Drizzle", "Rain":
-            return UIImage(named: "weather-rains")
+            return Icons.Weathers.rains
         case "Clear":
-            return UIImage(named: "weather-sun")
+            return Icons.Weathers.sun
         default:
             return nil
         }

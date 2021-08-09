@@ -40,7 +40,7 @@ class DailyForecastTableViewCell: UITableViewCell {
         dayLabel.text =  valueCondition ? "Tomorrow" : date
         probabilityRainLabel.isHidden = popIsZero ? true : false
         probabilityRainLabel.text = dailyData?.pop.getPercentage().roundToDecimal(0).removeZerosFromEnd(isPercetange: true)
-        probabilityRainLabel.textColor = UIColor(named: "RainProbabilityText-1")
+        probabilityRainLabel.textColor = Colors.Text.rainProbabilityText
         temperatureLabel.text = dailyData?.temp.day.roundToDecimal(0).removeZerosFromEnd(isPercetange: false)
         
     }
@@ -56,18 +56,18 @@ class DailyForecastTableViewCell: UITableViewCell {
         case "Clouds":
             switch dataDescription {
             case "few clouds":
-                return UIImage(named: "weathers-clouds")
+                return Icons.Weathers.clouds
             case "scattered clouds", "broken clouds", "overcast clouds":
-                return UIImage(named: "weather-cloud")
+                return Icons.Weathers.cloud
             default:
                 return nil
             }
         case "Thunderstorm":
-            return UIImage(named: "weather-thunder")
+            return Icons.Weathers.thunder
         case "Drizzle", "Rain":
-            return UIImage(named: "weather-rains")
+            return Icons.Weathers.rains
         case "Clear":
-            return UIImage(named: "weather-sun")
+            return Icons.Weathers.sun
         default:
             return nil
         }

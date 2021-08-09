@@ -9,6 +9,9 @@ import UIKit
 import Charts
 import CoreLocation
 
+protocol UpdateFavoritesDelegate {
+    func didTapFavoritesSwitchOff(name: String)
+}
 
 class LocationDetailViewController: UIViewController, ChartViewDelegate {
     
@@ -42,6 +45,7 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
     weak var axisFormatDelegate: IAxisValueFormatter?
     
     //MARK: - Properties
+    var delegate: UpdateFavoritesDelegate?
 
     //UI
     var nameCity : String?
@@ -55,20 +59,20 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
     var day = [String]()
     var chartValueTemp = [Double]()
     var chartValueHumidity = [Double]()
-    
     let userDefaults = UserDefaults.standard
     var headerIsOpen = false
     
     //MARK: - Services
     let locationService = LocationService()
     var paginationViewController: PaginationViewController?
-    var delegate: UpdateDataDelegate?
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         setupDelegation()
         getLocationData()
+        print("Nombre ciudad actual: \(String(describing: nameCity))")
+
     }
     
     //MARK: - HomeViewController Events
@@ -78,7 +82,9 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
         setupScrollView()
         setupTableView()
         setupCollectionView()
-        setupSwitchOff()
+        setupSwitch()
+        updateDataCurrentUI(with: dataForecast, forNameCity: nameCity)
+        updateValuesChartView()
     }
     
     func getLocationData() {
@@ -130,16 +136,14 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
     }
     
     //IBActions Buttons
-    
-    @IBAction func searchCityButtonPressed(_ sender: Any) {
-        let searchCity = SearchCityViewController(nibName: "SearchCityViewController", bundle: nil)
-        self.presentOnRoot(with: searchCity)
-    }
-    
+
     @IBAction func detailButtonPressed(_ sender: Any) {
         headerIsOpen = !headerIsOpen
         heightHeaderView.constant = headerIsOpen ? 550 : 255
+        let locationIsFirst: Bool = locationIndex == 0 ? true : false
         favoriteCitySwitch.isHidden = headerIsOpen ? false : true
+        favoriteCitySwitch.isHidden = locationIsFirst ? true : false
+        
         self.changeButtonIcon()
         self.chartView.animate(yAxisDuration: 1, easingOption: .linear)
         
@@ -168,21 +172,20 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
     //MARK: - Switch Extension
 
 extension LocationDetailViewController {
-    private func setupSwitchOff() {
-        if favoriteCitySwitch.isOn == false {
-            favoriteCitySwitch.tintColor = UIColor(named: "SwitchOff")
-            favoriteCitySwitch.backgroundColor = UIColor(named: "SwitchOff")
-            favoriteCitySwitch.layer.cornerRadius = 16
+    private func setupSwitch() {
+        if locationIndex == 0 {
+            favoriteCitySwitch.isHidden = true
+            favoriteCityLabel.isHidden = true
+        } else if favoriteCitySwitch.isOn {
+            favoriteCitySwitch.onTintColor = UIColor(named: "SwitchOn")
+        } else if favoriteCitySwitch.isOn == false {
+            guard let city = nameCity else { return }
+            delegate?.didTapFavoritesSwitchOff(name: city)
         }
     }
     
     @IBAction func favoriteCityPressed(_ sender: Any) {
-        if favoriteCitySwitch.isOn {
-            favoriteCitySwitch.onTintColor = UIColor(named: "SwitchOn")
-        }
-        else {
-            setupSwitchOff()
-        }
+        setupSwitch()
     }
 }
 
@@ -202,9 +205,9 @@ extension LocationDetailViewController: UIScrollViewDelegate {
         let isBouncingTop: Bool = scrollView.contentOffset.y < topInsetForBouncing - scrollView.contentInset.top
         
         if isBouncingTop {
-            scrollView.backgroundColor = UIColor(named: "Secondary")
+            scrollView.backgroundColor = Colors.secondary
         } else {
-            scrollView.backgroundColor = UIColor(named: "Primary")
+            scrollView.backgroundColor = Colors.primary
         }
     }
 }
@@ -299,12 +302,12 @@ extension LocationDetailViewController: UITableViewDelegate, UITableViewDataSour
     }
 }
 
-extension LocationDetailViewController: UpdateDataDelegate {
+extension LocationDetailViewController: UpdateDataDelegate  {
     
     func setupDelegation() {
         let paginationViewController = PaginationViewController(nibName: "PaginationViewController", bundle: nil)
         paginationViewController.delegateUpdate = self
       }
-
+    
 }
 
