@@ -41,21 +41,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
 
-
 }
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
         
-    
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        
         let data = response.notification.request.content.userInfo
         guard let cityName = data["cityName"] else { return }
         guard let lat = data["lat"] else { return }
         guard let lon = data["lon"] else { return }
         NotificationCenter.default.post(name: KeysNotification.notificationLocation, object: nil, userInfo: ["cityName" : cityName, "lat": lat , "lon" : lon])
         completionHandler()
-        
     }
 
 }

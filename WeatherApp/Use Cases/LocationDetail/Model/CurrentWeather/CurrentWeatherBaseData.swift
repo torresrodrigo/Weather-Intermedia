@@ -8,7 +8,6 @@
 import Foundation
 
 struct CurrentWeatherBaseData : Codable {
-    
     let weather: [Weather]?
     let temp: Double
     let wind: Double

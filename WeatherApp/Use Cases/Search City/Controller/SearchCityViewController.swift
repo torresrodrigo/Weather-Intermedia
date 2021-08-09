@@ -29,7 +29,6 @@ class SearchCityViewController: UIViewController {
         setupUI()
         setupSearchBar()
         setupTableView()
-        //self.hideKeyboardWhenTappedAround()
     }
     
     func setupUI() {
