@@ -11,7 +11,6 @@ import Charts
 extension LocationDetailViewController {
     
     func setupChartView(dataPoints: [String], valuesTemperature: [Double] , valuesHumidity: [Double] ) {
-        
         chartView.delegate = self
         chartView.legend.enabled = false
         chartView.pinchZoomEnabled = false
@@ -93,6 +92,5 @@ extension LocationDetailViewController {
         yAxis.labelFont = Fonts.RoundedBold
         
         chartView.data = comData
-        
     }
 }

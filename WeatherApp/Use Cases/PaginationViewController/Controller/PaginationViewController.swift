@@ -8,7 +8,6 @@
 import UIKit
 import CoreLocation
 
-
 protocol UpdateDataDelegate: AnyObject {}
 
 class PaginationViewController: UIPageViewController {
@@ -266,7 +265,6 @@ extension PaginationViewController: LocationServicesDelegate  {
     
     //Alert for request location permission
     func prompAuthorization() {
-        
         let alert = UIAlertController(title: "Location access is needed to get your current location", message: "Please allow location access", preferredStyle: .alert)
         let settingsAction = UIAlertAction(title: "Settings", style: .default) { _ in
             UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:], completionHandler: nil)
@@ -279,6 +277,5 @@ extension PaginationViewController: LocationServicesDelegate  {
         alert.addAction(cancelAction)
         alert.preferredAction = settingsAction
         present(alert, animated: true, completion: nil)
-        
     }
 }

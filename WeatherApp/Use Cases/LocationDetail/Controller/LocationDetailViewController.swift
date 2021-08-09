@@ -116,7 +116,6 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
         countryLocation.text = hasThirdText == true ? secondText : firstText
         provinceLocation.text = hasThirdText == true ? thirdText.replacingOccurrences(of: "_", with: " ") : secondText
         rainProbability.text = data.hourly[0].pop.getPercentage().roundToDecimal(0).removeZerosFromEnd(isPercetange: true)
-        
         currentLocation.text = city
         temperatureLocation.text = data.current.temp.roundToDecimal(0).removeZerosFromEnd(isPercetange: false)
         windStatus.text =  "\(data.current.wind.roundToDecimal(1)) m/s"
