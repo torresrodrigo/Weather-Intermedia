@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Endpoints {
+struct Endpoints { //MARK: Code Review: este struct quedaría más homogéneo en Constants, dado que acá no funciona como Service, sino que provee constantes
     let baseUrl: String = "https://api.openweathermap.org/data/2.5"
     let units: String = "metric"
     let exclude: String = "minutely"

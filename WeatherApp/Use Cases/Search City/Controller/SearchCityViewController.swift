@@ -17,7 +17,7 @@ class SearchCityViewController: UIViewController {
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var resultsTableView: UITableView!
     
-    var isExpand : Bool = false
+    var isExpand : Bool = false //MARK: Code Review: emprolijar los espacios entre los nombres de las variables y los :
     let userDefaults = UserDefaults.standard
     var searchCompleter = MKLocalSearchCompleter()
     var searchResults = [MKLocalSearchCompletion]()
@@ -102,7 +102,7 @@ extension SearchCityViewController: UITableViewDelegate, UITableViewDataSource {
         let result = searchResults[indexPath.row]
         let searchRequest = MKLocalSearch.Request(completion: result)
         
-            let search = MKLocalSearch(request: searchRequest)
+            let search = MKLocalSearch(request: searchRequest) //MARK: Code Review: revisar indentaciones
         search.start { [self] response, error in
             guard let coordinate = response?.mapItems[0].placemark.coordinate else {
                 return

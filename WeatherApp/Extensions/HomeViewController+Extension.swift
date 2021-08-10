@@ -9,7 +9,7 @@ import Foundation
 import Charts
 
 extension LocationDetailViewController {
-    
+    //MARK: Code Review: esta función es muy grande, debería abstraer código en otros métodos que mejoren su entendimiento con una rápida mirada
     func setupChartView(dataPoints: [String], valuesTemperature: [Double] , valuesHumidity: [Double] ) {
         chartView.delegate = self
         chartView.legend.enabled = false

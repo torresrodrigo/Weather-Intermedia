@@ -19,7 +19,7 @@ class PaginationViewController: UIPageViewController {
 
     //MARK: - Locations Variables
     let userDefaults = UserDefaults.standard
-    var locationData = [DataLocations]()
+    var locationData = [DataLocations]() //MARK: Code Review: Ver referencia a línea 81. Debería estar cada en LocationDetailViewController
     var locationIndex = 0
     var searchCityViewController: SearchCityViewController?
     var locationDetailViewController: LocationDetailViewController?
@@ -51,7 +51,7 @@ class PaginationViewController: UIPageViewController {
  
     //MARK: - Notifications
     
-    func createObserver() {
+    func createObserver() { //MARK: Code Review: detalle menor, se podría mejorar el nombre de la función, para que sea más claro qué es lo que hace, por ejemplo setupNotificationObserver
         //Create Location from Notification
         NotificationCenter.default.addObserver(self, selector: #selector(PaginationViewController.createNewLocationFromNotification(notification:)), name: KeysNotification.notificationLocation, object: nil)
     }
@@ -78,6 +78,7 @@ class PaginationViewController: UIPageViewController {
     }
     
     private func setupViewControllers(forPage page: Int?) -> LocationDetailViewController? {
+        //MARK: Code Review: acá se está creando un nuevo VC cada vez que se hace Swipe. Error grave! Debería tener el modelo cada VC, que se debe crear a demanda
         let vc = LocationDetailViewController(nibName: "LocationDetail", bundle: nil)
         let isZero = page == 0 ? true : false
         guard let index = page else {return nil}
