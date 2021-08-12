@@ -75,6 +75,7 @@ class PaginationViewController: UIPageViewController {
         vc.coordinates = coordinates
         vc.nameCity = cityName
         vc.isFirstLocation = locationType
+        //MARK: Code-Review: Si retornamos un VC en esta función, el append no debería estar dentro de este mismo método. Para mantener buenas prácticas, si una es una función GET, no deberíamos guardar datos en la misma.
         pages.append(vc)
         return vc
     }
@@ -168,7 +169,9 @@ extension PaginationViewController {
             let lat = data[i].lat
             let lon = data[i].lon
             let name = data[i].name
-            createLocationDetailViewController(forPage: (i + 1), forLatitude: lat, forLongitude: lon, forCityName: name, isFirstLocation: false)
+            //MARK: Code-Review: se está llamando a un método que devuelve algo, y no se guarda en ningún lado.
+            let newFavourite = createLocationDetailViewController(forPage: (i + 1), forLatitude: lat, forLongitude: lon, forCityName: name, isFirstLocation: false)
+            //funcion que haga el append
         }
     }
     
@@ -180,12 +183,13 @@ extension PaginationViewController: UIPageViewControllerDelegate, UIPageViewCont
 
     public func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         let locationViewController = viewController as! LocationDetailViewController
-        let index = pages.firstIndex(of: locationViewController)
+        //MARK: Code-review: Evitar force unwraps, usando if let, guard, etc
+        guard let index = pages.firstIndex(of: locationViewController) else { return nil }
         if pages.count > 1 {
-            if index! == 0 {
+            if index == 0 {
                 return pages.last
             } else {
-                return pages[index! - 1]
+                return pages[index - 1]
             }
         }
         return nil
@@ -213,13 +217,17 @@ extension PaginationViewController: UIPageViewControllerDelegate, UIPageViewCont
 
 extension PaginationViewController: SearchCityDelegate {
     
-    func didTapPlace(coordinate: CLLocationCoordinate2D, nameCity: String) {
+    private func addToFavourites(coordinate: CLLocationCoordinate2D, nameCity: String) {
         let latitude = String(coordinate.latitude)
         let longitude = String(coordinate.longitude)
         let favoritesLocation: Favorites = createFavorites(forLatitude: latitude, forLongitude: longitude, forNameCity: nameCity)
         favoritesLocations.append(favoritesLocation)
+    }
+    
+    func didTapPlace(coordinate: CLLocationCoordinate2D, nameCity: String) {
+        addToFavourites(coordinate: coordinate, nameCity: nameCity)
         self.saveUserDefaults(data: favoritesLocations)
-        let vc = createLocationDetailViewController(forPage: pages.count, forLatitude: latitude, forLongitude: longitude, forCityName: nameCity, isFirstLocation: false)
+        let vc = createLocationDetailViewController(forPage: pages.count, forLatitude: String(coordinate.latitude), forLongitude: String(coordinate.longitude), forCityName: nameCity, isFirstLocation: false)
         self.setViewControllers([vc], direction: .forward, animated: true, completion: nil)
         self.pageControl.numberOfPages = pages.count
         self.pageControl.currentPage = pages.count - 1
@@ -229,8 +237,9 @@ extension PaginationViewController: SearchCityDelegate {
 extension PaginationViewController: UpdateFavoritesDelegate {
 
     func didTapFavoritesSwitchOff(name: String) {
+        //MARK: Code-Review: como buena práctica, evitar el acceso forzado a elementos de arrays, como array[i]
         if name != pages[0].nameCity {
-            let index = pages.firstIndex{$0.nameCity == name }
+            let index = pages.firstIndex{$0.nameCity == name}
             let newFavorites: [Favorites] = favoritesLocations.filter {$0.name != name}
             favoritesLocations = newFavorites
             saveUserDefaults(data: newFavorites)
