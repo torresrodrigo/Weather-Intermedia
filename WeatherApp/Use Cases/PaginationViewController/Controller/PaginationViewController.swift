@@ -75,8 +75,6 @@ class PaginationViewController: UIPageViewController {
         vc.coordinates = coordinates
         vc.nameCity = cityName
         vc.isFirstLocation = locationType
-        //MARK: Code-Review: Si retornamos un VC en esta función, el append no debería estar dentro de este mismo método. Para mantener buenas prácticas, si una es una función GET, no deberíamos guardar datos en la misma.
-        pages.append(vc)
         return vc
     }
     
@@ -149,7 +147,7 @@ extension PaginationViewController {
             let decodedData = try? JSONDecoder().decode([Favorites].self, from: data)
             guard let favorites = decodedData else { return }
             favoritesLocations.append(contentsOf: favorites)
-            setFavorites(forFavorites: favorites)
+            getFavorites(forFavorites: favorites)
         }
     }
     
@@ -163,16 +161,19 @@ extension PaginationViewController {
         userDefaults.removeObject(forKey: UserDefaultsData.favorites)
     }
     
-    func setFavorites(forFavorites favoritesLocation: [Favorites]?) {
+    func getFavorites(forFavorites favoritesLocation: [Favorites]?) {
         guard let data = favoritesLocation else { return }
         for i in 0..<data.count {
             let lat = data[i].lat
             let lon = data[i].lon
             let name = data[i].name
-            //MARK: Code-Review: se está llamando a un método que devuelve algo, y no se guarda en ningún lado.
             let newFavourite = createLocationDetailViewController(forPage: (i + 1), forLatitude: lat, forLongitude: lon, forCityName: name, isFirstLocation: false)
-            //funcion que haga el append
+            setViewControllers(forFavorite: newFavourite)
         }
+    }
+    
+    func setViewControllers(forFavorite favorites: LocationDetailViewController) {
+        pages.append(favorites)
     }
     
 }
@@ -183,7 +184,6 @@ extension PaginationViewController: UIPageViewControllerDelegate, UIPageViewCont
 
     public func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         let locationViewController = viewController as! LocationDetailViewController
-        //MARK: Code-review: Evitar force unwraps, usando if let, guard, etc
         guard let index = pages.firstIndex(of: locationViewController) else { return nil }
         if pages.count > 1 {
             if index == 0 {
@@ -197,12 +197,12 @@ extension PaginationViewController: UIPageViewControllerDelegate, UIPageViewCont
     
     public func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
         let locationViewController = viewController as! LocationDetailViewController
-        let index = pages.firstIndex(of: locationViewController)
+        guard let index = pages.firstIndex(of: locationViewController) else { return nil }
         if pages.count > 1 {
-            if (index! == (pages.count - 1)) {
+            if (index == (pages.count - 1)) {
                 return pages.first
             } else {
-                return pages[index! + 1]
+                return pages[index + 1]
             }
         }
         return nil
@@ -217,37 +217,34 @@ extension PaginationViewController: UIPageViewControllerDelegate, UIPageViewCont
 
 extension PaginationViewController: SearchCityDelegate {
     
-    private func addToFavourites(coordinate: CLLocationCoordinate2D, nameCity: String) {
-        let latitude = String(coordinate.latitude)
-        let longitude = String(coordinate.longitude)
-        let favoritesLocation: Favorites = createFavorites(forLatitude: latitude, forLongitude: longitude, forNameCity: nameCity)
-        favoritesLocations.append(favoritesLocation)
-    }
-    
     func didTapPlace(coordinate: CLLocationCoordinate2D, nameCity: String) {
         addToFavourites(coordinate: coordinate, nameCity: nameCity)
         self.saveUserDefaults(data: favoritesLocations)
         let vc = createLocationDetailViewController(forPage: pages.count, forLatitude: String(coordinate.latitude), forLongitude: String(coordinate.longitude), forCityName: nameCity, isFirstLocation: false)
+        setViewControllers(forFavorite: vc)
         self.setViewControllers([vc], direction: .forward, animated: true, completion: nil)
         self.pageControl.numberOfPages = pages.count
         self.pageControl.currentPage = pages.count - 1
+    }
+    
+    private func addToFavourites(coordinate: CLLocationCoordinate2D, nameCity: String) {
+        let favoritesLocation: Favorites = createFavorites(forLatitude: String(coordinate.latitude), forLongitude: String(coordinate.longitude), forNameCity: nameCity)
+        favoritesLocations.append(favoritesLocation)
     }
 }
 
 extension PaginationViewController: UpdateFavoritesDelegate {
 
     func didTapFavoritesSwitchOff(name: String) {
-        //MARK: Code-Review: como buena práctica, evitar el acceso forzado a elementos de arrays, como array[i]
-        if name != pages[0].nameCity {
-            let index = pages.firstIndex{$0.nameCity == name}
-            let newFavorites: [Favorites] = favoritesLocations.filter {$0.name != name}
-            favoritesLocations = newFavorites
-            saveUserDefaults(data: newFavorites)
-            pages.remove(at: index!)
-            setViewControllers([pages[0]], direction: .reverse, animated: true, completion: nil)
-            pageControl.numberOfPages = pages.count
-            pageControl.currentPage = 0
+        if let index = pages.firstIndex(where: {$0.nameCity == name}) {
+            pages.remove(at: index)
         }
+        let newFavorites: [Favorites] = favoritesLocations.filter {$0.name != name}
+        favoritesLocations = newFavorites
+        saveUserDefaults(data: newFavorites)
+        setViewControllers([pages[0]], direction: .reverse, animated: true, completion: nil)
+        pageControl.numberOfPages = pages.count
+        pageControl.currentPage = 0
     }
 }
 
@@ -268,14 +265,13 @@ extension PaginationViewController: LocationServicesDelegate  {
         guard let location = locationService.locationManager.location else { return }
         guard let coreLocationLat = locationService.locationManager.location?.coordinate.latitude else { return }
         guard let coreLocationLon = locationService.locationManager.location?.coordinate.longitude else { return }
-        let latitude = String(describing: coreLocationLat)
-        let longitude = String(describing: coreLocationLon)
         locationService.locationManager(locationService.locationManager, didUpdateLocations: [location])
         geocoder.reverseGeocodeLocation(location) { [weak self] placemarket, error in
             if error == nil && self?.pages.count == 0 {
                 guard let firstLocation = placemarket?.first else { return }
                 guard let cityname = firstLocation.locality else { return }
-                guard let currentData = self?.createLocationDetailViewController(forPage: 0, forLatitude: latitude, forLongitude: longitude, forCityName: cityname, isFirstLocation: true) else { return }
+                guard let currentData = self?.createLocationDetailViewController(forPage: 0, forLatitude: String(describing: coreLocationLat), forLongitude: String(describing: coreLocationLon), forCityName: cityname, isFirstLocation: true) else { return }
+                self?.setViewControllers(forFavorite: currentData)
                 self?.setViewControllers([currentData], direction: .forward, animated: false, completion: nil)
                 self?.getDataUserDefault()
                 self?.setupPageControl()
