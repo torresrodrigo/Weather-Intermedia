@@ -14,15 +14,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         FirebaseApp.configure()
         Thread.sleep(forTimeInterval: 3)
-        //MARK: Code Review: las configuraciones, tales como las notificaciones, quizás quedan más ordenadas en una función aparte, para que quede más limpio el código
-        UNUserNotificationCenter.current().delegate = self
-
-        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-        UNUserNotificationCenter.current().requestAuthorization(
-        options: authOptions,
-        completionHandler: { _, _ in })
-        
-
+        setupNotificationsFCM()
         application.registerForRemoteNotifications()
         return true
     }
@@ -39,6 +31,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the user discards a scene session.
         // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
+    }
+    
+    func setupNotificationsFCM() {
+        UNUserNotificationCenter.current().delegate = self
+        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+        UNUserNotificationCenter.current().requestAuthorization(
+        options: authOptions,
+        completionHandler: { _, _ in })
     }
 
 }

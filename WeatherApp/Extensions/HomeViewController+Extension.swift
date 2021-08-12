@@ -9,33 +9,47 @@ import Foundation
 import Charts
 
 extension LocationDetailViewController {
-    //MARK: Code Review: esta función es muy grande, debería abstraer código en otros métodos que mejoren su entendimiento con una rápida mirada
     func setupChartView(dataPoints: [String], valuesTemperature: [Double] , valuesHumidity: [Double] ) {
-        chartView.delegate = self
-        chartView.legend.enabled = false
-        chartView.pinchZoomEnabled = false
-        chartView.highlightFullBarEnabled = false
-        
-        //Formatter for change values in xAxis
-        let formatter = XAxisNameFormater()
-        formatter.setValues(values: dataPoints)
-        let axis:XAxis = XAxis()
-        
-        // Supply data
         var dataEntriesBar: [BarChartDataEntry] = []
         var dataEntriesLine: [ChartDataEntry] = []
+        let axis: XAxis = XAxis()
+        let formatter = XAxisNameFormater()
+        formatter.setValues(values: dataPoints)
+        
+        setupChart()
+
         for x in 0..<dataPoints.count {
             let dataEntryBar = BarChartDataEntry(x: Double(x), y: valuesTemperature[x])
             let dataEntryLine = ChartDataEntry(x: Double(x), y: valuesHumidity[x])
             dataEntriesBar.append(dataEntryBar)
             dataEntriesLine.append(dataEntryLine)
         }
+
+        let bar = barChartData(forData: dataSetBarChart(dataEntry: dataEntriesBar))
+        let line =  lineChartData(forData: dataSetLineChart(dataEntry: dataEntriesLine))
+        setupIAxis(for: axis, for: formatter)
+        setupYAxis()
+        setupRightAxis()
         
-        let chartDataSetBar = BarChartDataSet(entries: dataEntriesBar)
+        chartView.data = combinedData(dataLine: line, dataBar: bar)
+    }
+    
+    func setupChart() {
+        chartView.delegate = self
+        chartView.legend.enabled = false
+        chartView.pinchZoomEnabled = false
+        chartView.highlightFullBarEnabled = false
+    }
+    
+    func dataSetBarChart(dataEntry data: [ChartDataEntry]?) -> ChartDataSet {
+        let chartDataSetBar = BarChartDataSet(entries: data)
         chartDataSetBar.colors = [NSUIColor(cgColor: Colors.selectedPageAndGraphics!.cgColor)]
         chartDataSetBar.axisDependency = .right
-        
-        let chartDataSetLine = LineChartDataSet(entries: dataEntriesLine)
+        return chartDataSetBar
+    }
+    
+    func dataSetLineChart(dataEntry data: [ChartDataEntry]?) -> [IChartDataSet] {
+        let chartDataSetLine = LineChartDataSet(entries: data)
         chartDataSetLine.colors = [NSUIColor(cgColor: Colors.chartTextAndLine!.cgColor)]
         chartDataSetLine.drawCirclesEnabled = false
         chartDataSetLine.mode = .cubicBezier
@@ -44,19 +58,30 @@ extension LocationDetailViewController {
         chartDataSetLine.drawValuesEnabled = true
         chartDataSetLine.lineDashLengths = [2,5]
         chartDataSetLine.axisDependency = .left
-        
-        let barChartData = BarChartData(dataSets: [chartDataSetBar])
+        return [chartDataSetLine]
+    }
+    
+    func barChartData(forData data: IChartDataSet) -> BarChartData {
+        let barChartData = BarChartData(dataSet: data)
         barChartData.barWidth = 0.6
         barChartData.setDrawValues(false)
-
-        let lineChartData = LineChartData(dataSets: [chartDataSetLine])
+        return barChartData
+    }
+    
+    func lineChartData(forData data: [IChartDataSet]) -> LineChartData {
+        let lineChartData = LineChartData(dataSets: data)
         lineChartData.setDrawValues(false)
-        
+        return lineChartData
+    }
+    
+    func combinedData(dataLine line: LineChartData, dataBar bar: BarChartData) -> CombinedChartData {
         let comData = CombinedChartData()
-        comData.barData = barChartData
-        comData.lineData = lineChartData
-        
-        //Setup UI Chart
+        comData.barData = bar
+        comData.lineData = line
+        return comData
+    }
+    
+    func setupIAxis(for axis: XAxis, for formatter: IAxisValueFormatter) {
         let xAxis = chartView.xAxis
         xAxis.drawGridLinesEnabled = false
         xAxis.avoidFirstLastClippingEnabled = false
@@ -69,7 +94,9 @@ extension LocationDetailViewController {
         xAxis.valueFormatter = axis.valueFormatter
         xAxis.labelTextColor = Colors.chartTextAndLine!
         xAxis.labelFont = Fonts.RoundedBold
-        
+    }
+    
+    func setupRightAxis() {
         let rightAxis = chartView.rightAxis
         rightAxis.valueFormatter = RightAxisFormatter()
         rightAxis.drawGridLinesEnabled = false
@@ -79,7 +106,9 @@ extension LocationDetailViewController {
         rightAxis.axisMaximum = 55
         rightAxis.labelTextColor = Colors.selectedPageAndGraphics!
         rightAxis.labelFont = Fonts.RoundedBold
-        
+    }
+    
+    func setupYAxis() {
         let yAxis = chartView.leftAxis
         yAxis.valueFormatter = YAxisFormatter()
         yAxis.drawGridLinesEnabled = false
@@ -87,10 +116,10 @@ extension LocationDetailViewController {
         yAxis.axisMinimum = 0
         yAxis.axisMaximum = 100
         yAxis.granularity = 30
-        
         yAxis.labelTextColor = Colors.chartTextAndLine!
         yAxis.labelFont = Fonts.RoundedBold
-        
-        chartView.data = comData
     }
+    
 }
+
+

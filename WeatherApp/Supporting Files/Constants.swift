@@ -8,6 +8,15 @@
 import Foundation
 import UIKit
 
+struct Endpoints {
+    let baseUrl: String = "https://api.openweathermap.org/data/2.5"
+    let units: String = "metric"
+    let exclude: String = "minutely"
+    let APP_ID = "1883a314d8d01d1a39e59853e0b21453"
+    
+    var forecastWeather: String { return "\(baseUrl)/onecall?&appid=\(APP_ID)&units=\(units)&exclude=\(exclude)"}
+}
+
 struct Colors {
     static let primary = UIColor(named: "Primary")
     static let secondary = UIColor(named: "Secondary")
@@ -29,6 +38,8 @@ struct Colors {
 struct Icons {
 
     static let logo = UIImage(named: "logo")
+    static let openHeader = UIImage(named: "ButtonsOpen")
+    static let closeHeader = UIImage(named: "ButtonsClose")
     
     struct BottomBar {
         static let locationArrowSolid = UIImage(named: "location-arrow-solid")

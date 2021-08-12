@@ -50,13 +50,12 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
     var nameCity : String?
     var dataForecast: ForecastWeatherBaseData?
     var coordinates: [String : String]?
-    var locationIndex = 0
+    var isFirstLocation: Bool?
     
     //ChartView
     var day = [String]()
     var chartValueTemp = [Double]()
     var chartValueHumidity = [Double]()
-    let userDefaults = UserDefaults.standard
     var headerIsOpen = false
     
     //MARK: - Services
@@ -83,7 +82,6 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
     
     func getLocationData() {
         guard let paramsLocation = coordinates else { return }
-        print("ParamsLocation: \(paramsLocation)")
      
         //Get ForecastWeatherData
         NetworkService.shared.getAllWeatherData(params: paramsLocation) { response in
@@ -97,7 +95,7 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
                     self?.hourlyForecastCollectionView.reloadData()
                 }
             case .failure(let error):
-                print("Error \(error.localizedDescription)")
+                print("Error \(error)")
             }
         }
     }
@@ -107,14 +105,14 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
         guard let city = nameCity else { return }
         
         let timezoneData = data.timezone
-        guard let firstText = timezoneData.firstText() else { return } // Continent
-        guard let secondText = timezoneData.newText()?.firstText() else { return } // Country or City
-        guard let thirdText = timezoneData.newText()?.secondText() else { return } // City
-        
+        guard let firstText = timezoneData.firstText() else { return }
+        guard let secondText = timezoneData.newText()?.firstText() else { return }
+        guard let thirdText = timezoneData.newText()?.secondText() else { return } 
+
         let hasThirdText: Bool = thirdText == "" ? false : true
-        
-        countryLocation.text = hasThirdText == true ? secondText : firstText
-        provinceLocation.text = hasThirdText == true ? thirdText.replacingOccurrences(of: "_", with: " ") : secondText
+
+        countryLocation.text = hasThirdText == true ? secondText.toClearSpaces() : firstText.toClearSpaces()
+        provinceLocation.text = hasThirdText == true ? thirdText.toClearSpaces() : secondText.toClearSpaces()
         rainProbability.text = data.hourly[0].pop.getPercentage().roundToDecimal(0).removeZerosFromEnd(isPercetange: true)
         currentLocation.text = city
         temperatureLocation.text = data.current.temp.roundToDecimal(0).removeZerosFromEnd(isPercetange: false)
@@ -136,7 +134,7 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
     @IBAction func detailButtonPressed(_ sender: Any) {
         headerIsOpen = !headerIsOpen
         heightHeaderView.constant = headerIsOpen ? 550 : 255
-        let locationIsFirst: Bool = locationIndex == 0 ? true : false
+        let locationIsFirst: Bool = isFirstLocation == true ? true : false
         favoriteCitySwitch.isHidden = headerIsOpen ? false : true
         favoriteCitySwitch.isHidden = locationIsFirst ? true : false
         
@@ -157,10 +155,10 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
     
     private func changeButtonIcon() {
         if !headerIsOpen {
-            self.detailButton.setImage(UIImage(named: "ButtonsClose"), for: .normal)
+            self.detailButton.setImage(Icons.closeHeader, for: .normal)
         }
         else {
-            self.detailButton.setImage(UIImage(named: "ButtonsOpen"), for: .normal)
+            self.detailButton.setImage(Icons.openHeader, for: .normal)
         }
     }
 }
@@ -169,7 +167,7 @@ class LocationDetailViewController: UIViewController, ChartViewDelegate {
 
 extension LocationDetailViewController {
     private func setupSwitch() {
-        if locationIndex == 0 {
+        if isFirstLocation == true {
             favoriteCitySwitch.isHidden = true
             favoriteCityLabel.isHidden = true
         } else if favoriteCitySwitch.isOn {

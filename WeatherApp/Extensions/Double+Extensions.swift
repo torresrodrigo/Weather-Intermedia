@@ -30,7 +30,7 @@ extension Double {
             formatter.minimumFractionDigits = 0
             formatter.maximumFractionDigits = 16
             let numberFormatted = String(formatter.string(from: number) ?? "")
-            return "\(numberFormatted)º"
+            return "\(numberFormatted)ºC"
         }
     }
     

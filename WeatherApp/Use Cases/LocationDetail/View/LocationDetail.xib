@@ -79,9 +79,9 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="...." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Gj9-IE-etA">
-                                            <rect key="frame" x="24" y="80" width="31.5" height="33"/>
+                                            <rect key="frame" x="24" y="80" width="282" height="33"/>
                                             <constraints>
-                                                <constraint firstAttribute="width" relation="lessThanOrEqual" constant="200" id="axh-5G-CVQ"/>
+                                                <constraint firstAttribute="width" relation="lessThanOrEqual" constant="300" id="axh-5G-CVQ"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" name="SFRounded-Ultralight" family="SF Pro Rounded" pointSize="28"/>
                                             <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -161,6 +161,7 @@
                                         <constraint firstItem="8P7-Yn-w5U" firstAttribute="leading" secondItem="HLN-o2-Qyi" secondAttribute="trailing" constant="42" id="IzE-VS-bC7"/>
                                         <constraint firstItem="Gj9-IE-etA" firstAttribute="top" secondItem="1OS-3u-bDr" secondAttribute="top" constant="80" id="JE9-gB-bpa"/>
                                         <constraint firstItem="HLN-o2-Qyi" firstAttribute="top" secondItem="fqk-mc-C3Z" secondAttribute="bottom" constant="18" id="JYU-DM-cF7"/>
+                                        <constraint firstItem="UwR-Hg-eoh" firstAttribute="leading" secondItem="Gj9-IE-etA" secondAttribute="trailing" constant="16" id="LKL-90-YYI"/>
                                         <constraint firstAttribute="height" constant="550" id="Qea-HN-11e"/>
                                         <constraint firstItem="7C3-Oo-gfb" firstAttribute="leading" secondItem="1OS-3u-bDr" secondAttribute="leading" constant="20" symbolic="YES" id="R4D-HC-PZa"/>
                                         <constraint firstItem="M52-Cm-d5m" firstAttribute="top" secondItem="Vpm-MM-KbJ" secondAttribute="bottom" constant="7.5" id="RvI-QA-ojx"/>

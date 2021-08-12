@@ -42,7 +42,3 @@ final class RightAxisFormatter: NSObject, IAxisValueFormatter {
         return String("\(Int(value))º")
     }
 }
-
-
-
-

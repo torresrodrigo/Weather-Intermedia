@@ -17,7 +17,6 @@ class SearchCityViewController: UIViewController {
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var resultsTableView: UITableView!
     
-    var isExpand : Bool = false //MARK: Code Review: emprolijar los espacios entre los nombres de las variables y los :
     let userDefaults = UserDefaults.standard
     var searchCompleter = MKLocalSearchCompleter()
     var searchResults = [MKLocalSearchCompletion]()
@@ -91,9 +90,10 @@ extension SearchCityViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let searchData = searchResults[indexPath.row]
+        
         let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
         cell.selectionStyle = .none
-        cell.textLabel?.text = "\(searchData.title), \(searchData.subtitle)"
+        cell.textLabel?.text = "\(searchData.title) \(searchData.subtitle.toClearComa())"
         cell.textLabel?.font = UIFont.italicSystemFont(ofSize: 18)
         return cell
     }
@@ -102,7 +102,7 @@ extension SearchCityViewController: UITableViewDelegate, UITableViewDataSource {
         let result = searchResults[indexPath.row]
         let searchRequest = MKLocalSearch.Request(completion: result)
         
-            let search = MKLocalSearch(request: searchRequest) //MARK: Code Review: revisar indentaciones
+        let search = MKLocalSearch(request: searchRequest) 
         search.start { [self] response, error in
             guard let coordinate = response?.mapItems[0].placemark.coordinate else {
                 return
@@ -111,7 +111,7 @@ extension SearchCityViewController: UITableViewDelegate, UITableViewDataSource {
             guard let name = response?.mapItems[0].name else {
                 return
             }
-        
+            
             delegate?.didTapPlace(coordinate: coordinate, nameCity: name)
             self.dismiss(animated: true, completion: nil)
         }

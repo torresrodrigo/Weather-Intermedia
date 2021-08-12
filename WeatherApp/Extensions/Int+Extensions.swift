@@ -28,8 +28,6 @@ extension Int {
     func convertHour() -> String {
         let date = Date(timeIntervalSince1970: TimeInterval(self))
         let formatter = DateFormatter()
-        //MARK: Code Review: no dejar partes de código comentadas
-        //formatter.timeZone = TimeZone(abbreviation: "UTC")
         formatter.dateFormat = "ha"
         return formatter.string(from: date)
     }

@@ -15,7 +15,7 @@ extension String {
         return index
     }
     
-    //Create a new string droping a indeces
+    //Create a new string droping an indeces
     func newText() -> String? {
         guard let checkChar = firstIndex(of: "/") else {return ""}
         let index = (checkChar.utf16Offset(in: self) + 1)
@@ -27,7 +27,6 @@ extension String {
     func firstText() -> String? {
         guard let checkChar = firstIndex(of: "/") else {return self}
         let index = (checkChar.utf16Offset(in: self) + 1)
-        print("Index checkchar: \(index)")
         let newText = self.prefix(index).dropLast()
         return String(newText)
     }
@@ -37,6 +36,17 @@ extension String {
         guard let checkChar = firstIndex(of: "/") else {return ""}
         let index = (checkChar.utf16Offset(in: self) + 1)
         let newText = self.dropFirst(index)
+        return String(newText)
+    }
+    
+    func toClearSpaces() -> String {
+        return self.replacingOccurrences(of: "_", with: " ")
+    }
+    
+    func toClearComa() -> String {
+        guard let checkChar = lastIndex(of: ",") else {return self}
+        let index = (checkChar.utf16Offset(in: self) + 1)
+        let newText = self.prefix(index).dropLast()
         return String(newText)
     }
     

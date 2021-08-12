@@ -11,10 +11,10 @@ import Alamofire
 class NetworkService {
     
     static let shared = NetworkService()
+    let url = Endpoints().forecastWeather
     
     func getAllWeatherData(params: [String : String], completed: @escaping (Result<ForecastWeatherBaseData,Error>) -> Void ){
-        
-        AF.request(Endpoints().forecastWeather, method: .get, parameters: params).responseData { response in
+        AF.request(url, method: .get, parameters: params).responseData { response in
             switch response.result {
             case .success(let data):
                 let decoder = JSONDecoder()
